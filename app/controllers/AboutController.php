@@ -16,13 +16,21 @@ class AboutController
 
     public function index()
     {
-        // Get all data from about_page table
-        $data = $this->db->getAll('about_me');
+      
 
         // Get Twig instance
         $twig = TwigConfig::getTwig();
 
         // Render Twig template with data
-        echo $twig->render('about.twig', ['data' => $data]);
+        echo $twig->render('about.twig', ['data' => 'ok']);
+    }
+
+    public function service()
+    {
+        // Get data for the service page
+        $data = $this->db->getAll('service_page');
+
+        // Render Twig template with data
+        echo TwigConfig::getTwig()->render('service.twig', ['data' => $data]);
     }
 }
