@@ -35,4 +35,11 @@ class Database
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getUserByUsername($username)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        return $stmt->fetch();
+    }
 }

@@ -1,69 +1,49 @@
 <?php
 
-namespace App\Controllers;
-
 use App\TwigConfig;
-use App\Models\MenuModel;
 use App\Models\UserModel;
 
-class AdminController
+class AdminController 
 {
-    public function loginForm()
-    {
-        echo TwigConfig::getTwig()->render('admin/login.twig');
-    }
 
     public function login()
     {
+
         $username = $_POST['username'];
         $password = $_POST['password'];
+
         $userModel = new UserModel();
-        $userModel->login($username, $password);
+        $error = $userModel->login($username, $password);
+
+        echo TwigConfig::getTwig()->render('admin/login.twig', ['error' => $error]);
     }
 
-    public function dashboard()
+    public function home()
     {
-        session_start();
-        if (!isset($_SESSION['logged_in'])) {
-            header('Location: /admin');
-            exit;
-        }
-
-        $menuModel = new MenuModel();
-        $menus = $menuModel->getAllMenus();
-
-        echo TwigConfig::getTwig()->render('admin/dashboard.twig', ['menus' => $menus]);
+        echo "lista menu";
+    }
+    
+    public function create()
+    {
+        echo "Creating a new menu";
     }
 
+    public function update($title)
+    {
+        echo "Edycja menu o tytule: $title";
+    }
+
+    public function destroy($id)
+    {
+        echo "Usunięcie o id: $id";
+    }
 
     public function logout()
     {
         session_start();
+        unset($_SESSION['logged_in']);
         session_destroy();
         header('Location: /admin');
-        exit;
-    }
-
-    public function add_menu()
-    {
-        $parent = isset($_POST['parent']) ? intval($_POST['parent']) : 0;
-        $title = $_POST['title'];
-        $slug = $_POST['slug'] = $title;
-        $status = $_POST['status'];
-        $reverse = $_POST['reverse'];
-
-        $menuModel = new MenuModel();
-
-        $parentSlug = '';
-        if ($parent != 0) {
-            $parentMenu = $menuModel->getMenuById($parent);
-            $parentSlug = $parentMenu['slug'] . '/';
-        }
-
-        $fullSlug = $parentSlug . $slug;
-        $menuModel->addMenu($parent, $title, $fullSlug, $status, $reverse);
-
-        header('Location: /admin/dashboard');
         exit;
     }
 

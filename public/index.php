@@ -1,51 +1,32 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
-use App\TwigConfig;
-use App\Models\Database;
-use App\Controllers\AdminController;
 
-$db = new Database();
+require dirname(__DIR__) . '/vendor/autoload.php';
+require_once('../Core/Router.php');
 
-// Remove query string from URI
-$uri = strtok($_SERVER['REQUEST_URI'], '?');
+require_once('../App/Controllers/AdminController.php');
+require_once('../App/Controllers/FrontController.php');
 
-// Define the base namespace for controllers
-$controllerNamespace = 'App\Controllers\\';
-
-// Remove leading and trailing slashes
-$uri = trim($uri, '/');
-
-// If URI is empty, default to 'home'
-$uri = $uri ?: 'home';
-
-// Check if the user is trying to access admin section
-if ($uri === 'admin') {
-    // Instantiate the AdminController
-    $controller = new AdminController();
-    // If the request method is POST, handle login
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $controller->login();
-    } else {
-        // Display login form
-        $controller->loginForm();
-    }
-    exit;
-}
-
-// Convert URI segments to controller class name
-$segments = explode('/', $uri);
+// Przykładowe użycie
+$router = new Router();
 
 
-// Get controller class name (using first segment as controller name)
-$controllerName = ucfirst(array_shift($segments));
-$controllerClass = $controllerNamespace . $controllerName . 'Controller';
+$router->with('/admin', function ($router, $prefix) {
+    $router->respondWithController(['GET', $prefix.'/menu', 'AdminController@home']);
+    $router->respondWithController(['POST', $prefix.'/login', 'AdminController@login']);
+    $router->respondWithController(['GET', $prefix.'/logout', 'AdminController@logout']);
+});
 
-// Check if the controller class exists
-if (class_exists($controllerClass)) {
-    $controller = new $controllerClass($db);
-    $method = empty($segments) ? 'index' : array_shift($segments);
-    $controller->$method(...$segments);
-} else {
-    $twig = TwigConfig::getTwig();
-    echo $twig->render('404.twig');
-}
+
+// Dodanie tras do kontrolera artykułów
+$router->respondWithController(['GET', '/', 'FrontController@home']);
+$router->respondWithController(['GET', '/{title}', 'FrontController@index']);
+$router->respondWithController(['GET', '/{title}/{id}', 'FrontController@show']);
+
+
+$router->dispatch();
+
+/*
+http://mycms.vot.pl/admin/menu
+http://mycms.vot.pl/admin/menu/create
+http://mycms.vot.pl/admin/menu/edit/1
+*/

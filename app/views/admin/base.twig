@@ -4,22 +4,15 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>
-			{% block title %}{% endblock %}
+			{% block title %}Dashboard
+			{% endblock %}
 		</title>
 	</head>
 	<body>
+		<h1>Dashboard</h1>
 		<main>
-			<menu>
-				<a href="/admin">Admin</a>
-				|
-				<a href="/">Strona główna</a>
-				|
-				<a href="/admin/menu">Tylko po zalogowaniu</a>
-				|
-				<a href="/admin/logout">Wyloguj</a>
-			</menu>
-
 			{% block content %}{% endblock %}
 		</main>
+
 	</body>
 </html>

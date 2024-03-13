@@ -15,26 +15,31 @@ class UserModel
 
     public function login($username, $password)
     {
-        // Prepare and execute query to fetch user data
+        $user = $this->db->getUserByUsername($username);
+
+        if (!$user) {
+            return 'Nieprawidłowy login lub hasło';
+        }
+
+        if (!password_verify($password, $user['password'])) {
+            return 'Nieprawidłowy login lub hasło';
+        }
+
         $stmt = $this->db->getConnection()->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);
-    
-        // Fetch user data
         $user = $stmt->fetch();
     
-        // Check if user exists and verify password
         if ($user && password_verify($password, $user['password'])) {
-            // Start session and set logged_in flag
             session_start();
             $_SESSION['logged_in'] = true;
-            // Redirect to admin dashboard
-            header('Location: /admin/dashboard');
+            header('Location: /admin/menu');
             exit;
         } else {
-            // If login fails, redirect back to login page or show error message
             header('Location: /admin?error=1');
             exit;
         }
+
+        return null; 
     }
     
     
