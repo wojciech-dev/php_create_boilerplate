@@ -42,4 +42,99 @@ class Database
         $stmt->execute([$username]);
         return $stmt->fetch();
     }
+
+    public function getAllMenusTitle()
+    {
+        $stmt = $this->conn->prepare("SELECT id, parent_id, title FROM menu");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllById($tablename, $id) {
+        $query = "SELECT * FROM $tablename WHERE id = :id";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':id', $id, PDO::PARAM_INT);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getTitleById($tablename, $id) {
+        $query = "SELECT title FROM $tablename WHERE id = :id";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':id', $id, PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        $contactTitle = null;
+
+        if (isset($result['slug']) && isset($result['slug']['title'])) {
+            $contactTitle = $result['slug']['title'];
+        }
+
+        return $contactTitle;
+    }
+
+
+    public function save($tablename, $data)
+    {
+    	try {
+            foreach ($data as $key => $value) {
+                $keys[] = $key;
+                $values[] = $value;
+            }
+        
+            $tblKeys = implode(",", $keys);        
+            $keyss = ':' . implode(",:", $keys);
+            
+            $query = $this->conn->prepare("INSERT INTO $tablename ($tblKeys) VALUES ($keyss)");
+            
+            foreach ($keys as $key) {
+                if (is_array($data[$key])) {
+                    $query->bindValue(":$key", null, PDO::PARAM_NULL);
+                } else {
+                    $query->bindValue(":$key", $data[$key]);
+                }
+            }
+
+            $query->execute();
+
+            
+        } catch (PDOException $e) {
+            echo 'Error ',  $e->getMessage(), "\n";
+        }
+    }
+
+    public function edit($tablename, $data, $id)
+    {
+        
+        try {
+            $sql = "UPDATE $tablename SET ";
+
+            foreach ($data as $key => $value) {
+                $sql .= "`" . $key . "` = :" . $key . ", ";
+            }
+    
+            $pat = "+-0*/";
+            $sql .= $pat;
+            $sql = str_replace(", " . $pat, " ", $sql);
+            $sql .= " WHERE `id` = $id";
+    
+            $query = $this->conn->prepare($sql);
+    
+            foreach ($data as $key => $value) {
+                $query->bindParam(":$key", $data[$key]);
+            }
+
+            $query->execute();
+
+            return 1;
+
+        } catch (PDOException $e) {
+			echo 'Error: ',  $e->getMessage(), "\n";
+		}
+    }
+
+
 }
+
+
+

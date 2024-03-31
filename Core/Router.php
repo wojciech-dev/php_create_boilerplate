@@ -1,12 +1,10 @@
 <?php
 
+use App\TwigConfig;
+
 class Router
 {
     private $routes = [];
-
-    public function __construct()
-    {
-    }
 
     public function with($prefix, $callback)
     {
@@ -27,11 +25,11 @@ class Router
             'controller' => $controllerName,
             'method_name' => $controllerMethod
         ];
+
     }
 
     public function dispatch()
     {
-
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -50,18 +48,17 @@ class Router
                         $controllerInstance->$controllerMethod($matches);
                         return;
                     } else {
-                        echo "404 Not Found";
+                        echo TwigConfig::getTwig()->render('404.twig');
                         return;
                     }
                 } else {
-                    echo "404 Not Found";
+                    echo TwigConfig::getTwig()->render('404.twig');
                     return;
                 }
             }
         }
 
-        // Obsługa 404
-        echo "404 Not Found";
+        echo TwigConfig::getTwig()->render('404.twig');
     }
 
     private function compileRouteRegex($route)

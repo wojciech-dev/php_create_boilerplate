@@ -1,26 +1,20 @@
 <?php
 
 use App\TwigConfig;
+use App\Helpers\Functions;
 
 class FrontController
 {
-
-    private function isLoggedIn()
-    {
-        session_start(); 
-        return isset($_SESSION['logged_in']);
-    }
-
     public function index($uri)
     {
-
+        //blokowanie login form po zalogowaniu
         if ($uri['title'] == 'admin') {
             
-            if ($this->isLoggedIn()) {
+            if (Functions::isLoggedIn()) {
                 header('Location: /');
                 exit;
             } else {
-                echo TwigConfig::getTwig()->render('admin/login.twig');
+                echo TwigConfig::getTwig()->render('front/login.twig');
             }
         } else {
             echo 'inna tresc';

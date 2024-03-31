@@ -1,0 +1,54 @@
+{% extends "admin/base.twig" %}
+
+{% block title %}Create menu -
+	{{ parent() }}
+{% endblock %}
+
+{% block content %}
+	<h2>Dodaj lub edytuj</h2>
+
+	{% if formAction == 'update' %}
+		<form action="/admin/menu/update/{{ edit.id }}" method="post">
+		{% else %}
+			<form action="/admin/menu/create" method="post">
+			{% endif %}
+			<input type="hidden" name="id" value="{{ edit.id }}">
+			<label for="title">Tytuł:</label><br>
+			<input type="text" id="title" name="title" value='{{ edit.title }}'><br><br>
+			<p style="color: red;">{{ error[0] }}</p>
+
+			<label for="status">Status:</label><br>
+			<select id="status" name="status">
+				<option value="1" {% if edit.status == 1 %} selected {% endif %}>Aktywne</option>
+				<option value="0" {% if edit.status == 0 %} selected {% endif %}>Nieaktywne</option>
+			</select><br><br>
+			<ul>
+				<input type="radio" name="parent_id" value="0">
+				<label>Strona główna</label>
+				{% for item in data %}
+					{% if item.parent_id == 0 %}
+						{{ _self.renderNestedList(item, data, edit) }}
+					{% endif %}
+				{% endfor %}
+			</ul>
+
+
+			{% macro renderNestedList(item, data, edit) %}
+				<li>
+					<input type="radio" name="parent_id" value="{{ item.id }}" {% if item.id == edit.id %} checked {% endif %}>
+					<label>{{ item.title }}</label>
+				</li>
+				{% set children = data|filter(child => child.parent_id == item.id) %}
+				{% if children is not empty %}
+					<ul>
+						{% for child in children %}
+							{{ _self.renderNestedList(child, data, edit) }}
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endmacro %}
+
+			<button type="submit" name="submit">Dodaj</button>
+		</form>
+
+	{% endblock %}

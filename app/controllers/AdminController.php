@@ -1,36 +1,79 @@
 <?php
 
 use App\TwigConfig;
+use App\PostData;
 use App\Models\UserModel;
+use App\Models\Database;
+use App\Helpers\Functions;
+
 
 class AdminController 
 {
 
+    private $db;
+
+    public function __construct()
+    {
+        $this->db = new Database();
+    }
+
     public function login()
     {
-
         $username = $_POST['username'];
         $password = $_POST['password'];
-
         $userModel = new UserModel();
         $error = $userModel->login($username, $password);
-
-        echo TwigConfig::getTwig()->render('admin/login.twig', ['error' => $error]);
+        echo TwigConfig::getTwig()->render('front/login.twig', ['error' => $error]);
     }
 
     public function home()
     {
-        echo "lista menu";
+       
+        $menuItems =  $this->db->getAll('menu');
+        echo TwigConfig::getTwig()->render('admin/menu.twig', ['data' => $menuItems]);
+
     }
     
     public function create()
     {
-        echo "Creating a new menu";
+        if (isset($_POST['submit'])) {
+            $postItems = PostData::gePostDataMenu();
+            //Functions::debug($postItems);
+            if (isset($postItems['errors']) && $postItems['errors']) {
+                $result = NULL;
+            } else {
+                $result = $this->db->save('menu', $postItems);
+                header('Location: /admin/menu');
+            }
+        }
+
+        $menuItems = $this->db->getAllMenusTitle();
+        echo TwigConfig::getTwig()->render('admin/menuForm.twig', ['data' => $menuItems, 'error' => $postItems['errors'] ?? []]);
     }
 
-    public function update($title)
+    public function update($id)
     {
-        echo "Edycja menu o tytule: $title";
+        if (isset($_POST['submit'])) {
+            $postItems = PostData::gePostDataMenu();
+            
+
+            //Functions::debug($postItems);
+            if (isset($postItems['errors']) && $postItems['errors']) {
+                $result = NULL;
+            } else {
+                $result = $this->db->edit('menu', $postItems, $id['id']);
+                header('Location: /admin/menu');
+            }
+        }
+
+        $menuById = $this->db->getAllById('menu', $id['id']);
+        $menuItems = $this->db->getAllMenusTitle();
+        echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
+            'data' => $menuItems, 
+            'edit' => $menuById, 
+            'formAction' => 'update',
+            'error' => $postItems['errors'] ?? []
+        ]);
     }
 
     public function destroy($id)
@@ -40,7 +83,7 @@ class AdminController
 
     public function logout()
     {
-        session_start();
+
         unset($_SESSION['logged_in']);
         session_destroy();
         header('Location: /admin');

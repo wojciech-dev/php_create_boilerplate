@@ -1,19 +1,26 @@
 <?php
-
+session_start(); 
 require dirname(__DIR__) . '/vendor/autoload.php';
 require_once('../Core/Router.php');
 
 require_once('../App/Controllers/AdminController.php');
 require_once('../App/Controllers/FrontController.php');
 
-// Przykładowe użycie
+use App\Helpers\Functions;
+
+
 $router = new Router();
 
-
 $router->with('/admin', function ($router, $prefix) {
-    $router->respondWithController(['GET', $prefix.'/menu', 'AdminController@home']);
+    if (Functions::isLoggedIn()) {
+        $router->respondWithController(['GET', $prefix.'/menu', 'AdminController@home']);
+        $router->respondWithController([Functions::checkRequestMethod(), $prefix.'/menu/create', 'AdminController@create']);
+        $router->respondWithController([Functions::checkRequestMethod(), $prefix.'/menu/update/{id}', 'AdminController@update']);
+    }
+    
     $router->respondWithController(['POST', $prefix.'/login', 'AdminController@login']);
     $router->respondWithController(['GET', $prefix.'/logout', 'AdminController@logout']);
+    
 });
 
 
@@ -24,6 +31,10 @@ $router->respondWithController(['GET', '/{title}/{id}', 'FrontController@show'])
 
 
 $router->dispatch();
+
+
+
+//Functions::mini_audyt_strony($_SERVER['PHP_SELF']);
 
 /*
 http://mycms.vot.pl/admin/menu

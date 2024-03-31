@@ -7,12 +7,30 @@
 			{% block title %}Dashboard
 			{% endblock %}
 		</title>
-	</head>
-	<body>
-		<h1>Dashboard</h1>
-		<main>
-			{% block content %}{% endblock %}
-		</main>
+		<style>
+			body {
+				background: silver;
+			}
 
-	</body>
+			ul {
+				list-style: none;
+			}
+		</style>
+		<body>
+			<ul>
+				<li>
+					<a href="/admin/logout">Wyloguj</a>
+				</li>
+				<li>
+					<a href="/admin/menu/create">Dodaj menu</a>
+				</li>
+				<li>
+					<a href="/admin/menu">Menu</a>
+				</li>
+			</ul>
+			<main>
+				{% block content %}{% endblock %}
+			</main>
+		</body>
+	</head>
 </html>

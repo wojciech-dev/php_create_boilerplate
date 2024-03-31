@@ -1,0 +1,10 @@
+<ul>
+	<li>
+		<a href="{{ item.slug }}">{{ item.title }}</a>
+		{% if item.children|length > 0 %}
+			{% for child in item.children %}
+				{% include '_item.twig' with {'item': child} %}
+			{% endfor %}
+		{% endif %}
+	</li>
+</ul>
