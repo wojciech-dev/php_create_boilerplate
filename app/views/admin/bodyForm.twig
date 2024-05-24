@@ -13,13 +13,20 @@
 			<h2>Dodaj</h2>
 			<form action="/admin/body/create/{{ section }}" method="post" enctype="multipart/form-data">
 			{% endif %}
+			    <!-- Dodaj obsługę błędów -->
+    {% if error %}
+        <ul>
+            {% for message in error %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 			<input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
+
 			<label for="name">Name:</label>
-			<p style="color: red;">{{ error[0] }}</p>
 			<input type="text" id="name" name="name"><br>
 	
 			<label for="title">Title:</label>
-			<p style="color: red;">{{ error[1] }}</p>
 			<input type="text" id="title" name="title"><br>
 
 			<label for="description">Description:</label>
@@ -31,7 +38,6 @@
 			<label for="more">More:</label>
 			<input type="checkbox" id="more" name="more" value="1"><br>
 
-		
 			<label for="photo1">Photo 1:</label>
 			<input type="file" id="photo1" name="photo1"><br>
 

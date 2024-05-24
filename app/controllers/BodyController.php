@@ -33,8 +33,8 @@ class BodyController
         if (isset($_POST['submit'])) {
             $postItems = PostData::getPostDataBody();
             
-            if (isset($postItems['errors']) && $postItems['errors']) {
-                return NULL;
+            if (isset($postItems['errors'])) {
+                $errorMessages = $postItems['errors'];
             } else {
                 $this->db->save('body', $postItems);
                 header('Location: /admin/body/'.$id['id'].'');
@@ -44,7 +44,7 @@ class BodyController
 
         echo TwigConfig::getTwig()->render('admin/bodyForm.twig', [
             'section' => $id['id'],
-            'error' => $postItems['errors'] ?? []
+            'error' => $errorMessages ?? []
         ]);
     }
 
