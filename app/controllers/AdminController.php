@@ -28,12 +28,11 @@ class AdminController
 
     public function home()
     {
-       
         $menuItems =  $this->db->getAll('menu');
         echo TwigConfig::getTwig()->render('admin/menu.twig', ['data' => $menuItems]);
-
     }
     
+    //tworzenie nowej pozycji menu
     public function create()
     {
         if (isset($_POST['submit'])) {
@@ -48,9 +47,13 @@ class AdminController
         }
 
         $menuItems = $this->db->getAllMenusTitle();
-        echo TwigConfig::getTwig()->render('admin/menuForm.twig', ['data' => $menuItems, 'error' => $postItems['errors'] ?? []]);
+        echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
+            'data' => $menuItems, 
+            'error' => $postItems['errors'] ?? []
+        ]);
     }
 
+    //edycja menu
     public function update($id)
     {
         if (isset($_POST['submit'])) {

@@ -1,0 +1,60 @@
+{% extends "admin/base.twig" %}
+
+{% block title %}Body -
+	{{ parent() }}
+{% endblock %}
+
+{% block content %}
+	<h2>Body Items</h2>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Parent Id</th>
+				<th>Name</th>
+				<th>Title</th>
+				<th>Description</th>
+				<th>Slug</th>
+				<th>Status</th>
+				<th>More</th>
+				<th>Photo 1</th>
+				<th>Photo 2</th>
+				<th>Photo 3</th>
+				<th>Photo 4</th>
+				<th>Created At</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in items %}
+				<tr>
+					<td>{{ item.id }}</td>
+					<td>{{ item.parent_id }}</td>
+					<td>{{ item.name }}</td>
+					<td>{{ item.title }}</td>
+					<td>{{ item.description }}</td>
+					<td>{{ item.slug }}</td>
+					<td>{{ item.status }}</td>
+					<td>{{ item.more }}</td>
+					<td>{{ item.photo1 }}</td>
+					<td>{{ item.photo2 }}</td>
+					<td>{{ item.photo3 }}</td>
+					<td>{{ item.photo4 }}</td>
+					<td>{{ item.created_at }}</td>
+					<td>
+						<a href="#">Edit</a>
+						<a href="#">Delete</a>
+					</td>
+				</tr>
+			{% endfor %}
+			<tr>
+				<td>
+					<a href="/admin/body/create/{{ section }}">Add</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+
+{% endblock %}

@@ -5,6 +5,7 @@ require_once('../Core/Router.php');
 
 require_once('../App/Controllers/AdminController.php');
 require_once('../App/Controllers/FrontController.php');
+require_once('../App/Controllers/BodyController.php');
 
 use App\Helpers\Functions;
 
@@ -16,6 +17,9 @@ $router->with('/admin', function ($router, $prefix) {
         $router->respondWithController(['GET', $prefix.'/menu', 'AdminController@home']);
         $router->respondWithController([Functions::checkRequestMethod(), $prefix.'/menu/create', 'AdminController@create']);
         $router->respondWithController([Functions::checkRequestMethod(), $prefix.'/menu/update/{id}', 'AdminController@update']);
+        
+        $router->respondWithController(['GET', $prefix.'/body/{id}', 'BodyController@home']);
+        $router->respondWithController([Functions::checkRequestMethod(), $prefix.'/body/create/{id}', 'BodyController@create']);
     }
     
     $router->respondWithController(['POST', $prefix.'/login', 'AdminController@login']);
@@ -27,7 +31,10 @@ $router->with('/admin', function ($router, $prefix) {
 // Dodanie tras do kontrolera artykułów
 $router->respondWithController(['GET', '/', 'FrontController@home']);
 $router->respondWithController(['GET', '/{title}', 'FrontController@index']);
-$router->respondWithController(['GET', '/{title}/{id}', 'FrontController@show']);
+$router->respondWithController(['GET', '/{title}/{subtitle}', 'FrontController@index']);
+$router->respondWithController(['GET', '/{title}/{subtitle}/{subsubtitle}', 'FrontController@index']);
+
+
 
 
 $router->dispatch();

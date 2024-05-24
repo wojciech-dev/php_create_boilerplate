@@ -10,7 +10,7 @@ class Database
     private $host = 'localhost';
     private $username = 'root';
     private $password = '1234w';
-    private $dbname = 'new_boilerplate';
+    private $dbname = 'cms';
     private $conn;
 
     public function __construct()
@@ -28,14 +28,26 @@ class Database
     {
         return $this->conn;
     }
-
-    public function getAll($table)
+    //ogólne pobieranie rekordów
+    public function getAll($table, $conditions = [], $fields = ['*'])
     {
-        $stmt = $this->conn->prepare("SELECT * FROM $table");
-        $stmt->execute();
+        $fieldsStr = implode(", ", $fields);
+
+        $sql = "SELECT $fieldsStr FROM $table";
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE ";
+            $sql .= implode(" AND ", array_map(function($key) {
+                return "$key = :$key";
+            }, array_keys($conditions)));
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($conditions);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    //logowanie
     public function getUserByUsername($username)
     {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");
@@ -43,6 +55,7 @@ class Database
         return $stmt->fetch();
     }
 
+    //budowanie drzewka mneu
     public function getAllMenusTitle()
     {
         $stmt = $this->conn->prepare("SELECT id, parent_id, title FROM menu");
@@ -50,6 +63,7 @@ class Database
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    //do wyswietlania w formularzu edycji rekordu
     public function getAllById($tablename, $id) {
         $query = "SELECT * FROM $tablename WHERE id = :id";
         $statement = $this->conn->prepare($query);
@@ -58,22 +72,7 @@ class Database
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getTitleById($tablename, $id) {
-        $query = "SELECT title FROM $tablename WHERE id = :id";
-        $statement = $this->conn->prepare($query);
-        $statement->bindParam(':id', $id, PDO::PARAM_INT);
-        $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-        $contactTitle = null;
-
-        if (isset($result['slug']) && isset($result['slug']['title'])) {
-            $contactTitle = $result['slug']['title'];
-        }
-
-        return $contactTitle;
-    }
-
-
+    //zapisywanie rekordu
     public function save($tablename, $data)
     {
     	try {
@@ -103,6 +102,7 @@ class Database
         }
     }
 
+    //edycja rekordu
     public function edit($tablename, $data, $id)
     {
         

@@ -5,12 +5,13 @@ use App\TwigConfig;
 
 class Functions {
 
+  //sprawdzenie czy uzytkonik jest zalogowany
     public static function isLoggedIn()
     {
-        
         return isset($_SESSION['logged_in']);
     }
 
+    //sprawdzenie czy rzadanie orzyszło metodą GET czy POST
     public static function checkRequestMethod()
     {
       if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -22,6 +23,7 @@ class Functions {
       }
     }
 
+    //generowanie slug
   public static function slugify($text)
   {
     $text = preg_replace('~[^\pL\d]+~u', '-', $text);
@@ -36,23 +38,7 @@ class Functions {
     return $text;
   }
 
-  //pobieranie numeru z adresu url
-  public static function getNumberFromURL($url)
-  {
-    $parsedURL = parse_url($url);
-    if (isset($parsedURL['path'])) {
-        $pathSegments = explode('/', $parsedURL['path']);
-        foreach ($pathSegments as $segment) {
-            if (is_numeric($segment)) {
-                return intval($segment);
-            }
-        }
-    }
-
-    return null;
-}
-
-
+//debug
   public static function debug($data) 
   {
     echo "<pre>";
@@ -101,4 +87,9 @@ class Functions {
 }
 
 
+
+
+
+
 }
+

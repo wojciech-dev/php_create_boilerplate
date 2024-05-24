@@ -1,0 +1,51 @@
+{% extends "admin/base.twig" %}
+
+{% block title %}Create body -
+	{{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+	{% if formAction == 'update' %}
+		<h2>edytuj</h2>
+		<form action="/admin/body/update/{{ edit.id }}" method="post" enctype="multipart/form-data">
+		{% else %}
+			<h2>Dodaj</h2>
+			<form action="/admin/body/create/{{ section }}" method="post" enctype="multipart/form-data">
+			{% endif %}
+			<input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
+			<label for="name">Name:</label>
+			<p style="color: red;">{{ error[0] }}</p>
+			<input type="text" id="name" name="name"><br>
+	
+			<label for="title">Title:</label>
+			<p style="color: red;">{{ error[1] }}</p>
+			<input type="text" id="title" name="title"><br>
+
+			<label for="description">Description:</label>
+			<textarea id="description" name="description"></textarea><br>
+
+			<label for="status">Status:</label>
+			<input type="checkbox" id="status" name="status" value="1"><br>
+
+			<label for="more">More:</label>
+			<input type="checkbox" id="more" name="more" value="1"><br>
+
+		
+			<label for="photo1">Photo 1:</label>
+			<input type="file" id="photo1" name="photo1"><br>
+
+			<label for="photo2">Photo 2:</label>
+			<input type="file" id="photo2" name="photo2"><br>
+
+			<label for="photo3">Photo 3:</label>
+			<input type="file" id="photo3" name="photo3"><br>
+
+			<label for="photo4">Photo 4:</label>
+			<input type="file" id="photo4" name="photo4"><br>
+
+			<button type="submit" name="submit">Save</button>
+		</form>
+
+
+	{% endblock %}

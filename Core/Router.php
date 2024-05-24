@@ -45,7 +45,15 @@ class Router
                     $controllerInstance = new $controllerName();
                     // Sprawdzenie, czy metoda kontrolera istnieje
                     if (method_exists($controllerInstance, $controllerMethod)) {
-                        $controllerInstance->$controllerMethod($matches);
+                        // Pobieranie parametrów zagnieżdżonych adresów URL
+                        $params = [];
+                        foreach ($matches as $key => $value) {
+                            if (!is_numeric($key)) {
+                                $params[$key] = $value;
+                            }
+                        }
+                        // Wywołanie metody kontrolera z przekazanymi parametrami
+                        $controllerInstance->$controllerMethod($params);
                         return;
                     } else {
                         echo TwigConfig::getTwig()->render('404.twig');
@@ -73,6 +81,4 @@ class Router
 
         return $regex;
     }
-    
 }
-

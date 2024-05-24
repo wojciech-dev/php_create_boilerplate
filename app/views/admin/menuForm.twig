@@ -5,11 +5,12 @@
 {% endblock %}
 
 {% block content %}
-	<h2>Dodaj lub edytuj</h2>
 
 	{% if formAction == 'update' %}
+		<h2>edytuj</h2>
 		<form action="/admin/menu/update/{{ edit.id }}" method="post">
 		{% else %}
+			<h2>Dodaj</h2>
 			<form action="/admin/menu/create" method="post">
 			{% endif %}
 			<input type="hidden" name="id" value="{{ edit.id }}">

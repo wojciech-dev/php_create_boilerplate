@@ -10,9 +10,7 @@
 
 	{% macro renderNestedList(item, data) %}
 		<li>{{ item.title }}
-			<a href="/admin/banner/1">Banner</a>
-			<a href="/admin/body/1">Body</a>
-			<a href="/admin/box/1">Box</a>
+			<a href="/admin/body/{{ item.id }}">Body</a>
 			<a href="/admin/menu/update/{{ item.id }}">Edit</a>
 			<a href="/admin/menu/delete/{{ item.id }}">Delete</a>
 		</li>
