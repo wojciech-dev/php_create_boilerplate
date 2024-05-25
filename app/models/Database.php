@@ -65,11 +65,15 @@ class Database
 
     //do wyswietlania w formularzu edycji rekordu
     public function getAllById($tablename, $id) {
-        $query = "SELECT * FROM $tablename WHERE id = :id";
-        $statement = $this->conn->prepare($query);
-        $statement->bindParam(':id', $id, PDO::PARAM_INT);
-        $statement->execute();
-        return $statement->fetch(PDO::FETCH_ASSOC);
+        try {
+            $query = $this->conn->prepare("SELECT * FROM $tablename WHERE id = :id");
+            $query->bindValue(":id", $id, PDO::PARAM_INT);
+            $query->execute();
+            return $query->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+            return false;
+        }
     }
 
     //zapisywanie rekordu
@@ -96,7 +100,6 @@ class Database
 
             $query->execute();
 
-            
         } catch (PDOException $e) {
             echo 'Error ',  $e->getMessage(), "\n";
         }
@@ -105,7 +108,6 @@ class Database
     //edycja rekordu
     public function edit($tablename, $data, $id)
     {
-        
         try {
             $sql = "UPDATE $tablename SET ";
 

@@ -39,9 +39,9 @@ class AdminController
             $postItems = PostData::gePostDataMenu();
             //Functions::debug($postItems);
             if (isset($postItems['errors']) && $postItems['errors']) {
-                $result = NULL;
+                $errorMessages = $postItems['errors'];
             } else {
-                $result = $this->db->save('menu', $postItems);
+                $this->db->save('menu', $postItems);
                 header('Location: /admin/menu');
             }
         }
@@ -49,7 +49,7 @@ class AdminController
         $menuItems = $this->db->getAllMenusTitle();
         echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
             'data' => $menuItems, 
-            'error' => $postItems['errors'] ?? []
+            'error' => $errorMessages ?? []
         ]);
     }
 
@@ -60,11 +60,11 @@ class AdminController
             $postItems = PostData::gePostDataMenu();
             
 
-            //Functions::debug($postItems);
+            Functions::debug($postItems);
             if (isset($postItems['errors']) && $postItems['errors']) {
-                $result = NULL;
+                $errorMessages = $postItems['errors'];
             } else {
-                $result = $this->db->edit('menu', $postItems, $id['id']);
+                $this->db->edit('menu', $postItems, $id['id']);
                 header('Location: /admin/menu');
             }
         }
@@ -75,7 +75,7 @@ class AdminController
             'data' => $menuItems, 
             'edit' => $menuById, 
             'formAction' => 'update',
-            'error' => $postItems['errors'] ?? []
+            'error' => $errorMessages ?? []
         ]);
     }
 

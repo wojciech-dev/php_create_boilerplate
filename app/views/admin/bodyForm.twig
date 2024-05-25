@@ -24,31 +24,61 @@
 			<input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
 
 			<label for="name">Name:</label>
-			<input type="text" id="name" name="name"><br>
+			<input type="text" id="name" name="name" value="{{ edit.name }}"><br>
 	
 			<label for="title">Title:</label>
-			<input type="text" id="title" name="title"><br>
+			<input type="text" id="title" name="title" value="{{ edit.title }}"><br>
 
 			<label for="description">Description:</label>
-			<textarea id="description" name="description"></textarea><br>
+			<textarea id="description" name="description">{{ edit.description }}</textarea><br>
 
 			<label for="status">Status:</label>
-			<input type="checkbox" id="status" name="status" value="1"><br>
+			<input type="checkbox" id="status" name="status" {% if edit.status == 1 %}checked{% endif %}>
+<br>
 
 			<label for="more">More:</label>
-			<input type="checkbox" id="more" name="more" value="1"><br>
+			<input type="checkbox" id="more" name="more" {% if edit.more == 1 %}checked{% endif %}><br>
 
-			<label for="photo1">Photo 1:</label>
-			<input type="file" id="photo1" name="photo1"><br>
+    <!-- Pola do przesyłania nowych obrazków z miniaturami -->
+    <div>
+        <label for="photo1">Photo 1:</label>
+        {% if edit.photo1 %}
+            <div>
+                <img src="/uploads/{{ edit.photo1 }}" alt="Photo 1" style="width: 100px; height: auto;">
+            </div>
+        {% endif %}
+        <input type="file" name="photo1">
+    </div>
 
-			<label for="photo2">Photo 2:</label>
-			<input type="file" id="photo2" name="photo2"><br>
+    <div>
+        <label for="photo2">Photo 2:</label>
+        {% if edit.photo2 %}
+            <div>
+                <img src="/uploads/{{ edit.photo2 }}" alt="Photo 2" style="width: 100px; height: auto;">
+            </div>
+        {% endif %}
+        <input type="file" name="photo2">
+    </div>
 
-			<label for="photo3">Photo 3:</label>
-			<input type="file" id="photo3" name="photo3"><br>
+    <div>
+        <label for="photo3">Photo 3:</label>
+        {% if edit.photo3 %}
+            <div>
+                <img src="/uploads/{{ edit.photo3 }}" alt="Photo 3" style="width: 100px; height: auto;">
+            </div>
+        {% endif %}
+        <input type="file" name="photo3">
+    </div>
 
-			<label for="photo4">Photo 4:</label>
-			<input type="file" id="photo4" name="photo4"><br>
+    <div>
+        <label for="photo4">Photo 4:</label>
+        {% if edit.photo4 %}
+            <div>
+                <img src="/uploads/{{ edit.photo4 }}" alt="Photo 4" style="width: 100px; height: auto;">
+            </div>
+        {% endif %}
+        <input type="file" name="photo4">
+    </div>
 
 			<button type="submit" name="submit">Save</button>
 		</form>

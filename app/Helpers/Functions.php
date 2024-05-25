@@ -47,6 +47,39 @@ class Functions {
     exit;
   }
 
+  //pobiera ID z abresu url
+  public function getIdFromUrl($url)
+  {
+      $path = parse_url($url, PHP_URL_PATH);
+  
+      if (preg_match('/(\d+)$/', $path, $matches)) {
+          return (int)$matches[1];
+      }
+  
+      return null;
+  }
+
+  /*
+  sprawdza czy zmienna $_POST['parent_id'] jest taka sama jak id w adresie url
+  jak tak do zapisuje 0 jak nie to wartość pola
+  potrzebne do edycji drzewka menu
+  */
+  public static function checkParentIdWithUrlId($parentId) 
+  {
+    $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    $urlComponents = parse_url($url);
+    $path = $urlComponents['path'];
+
+    $pathParts = explode('/', trim($path, '/'));
+    $urlId = end($pathParts);
+
+    if ($parentId == $urlId) {
+        return true;
+    }
+
+    return false;
+}
+
 
   public static function mini_audyt_strony($url)
   {

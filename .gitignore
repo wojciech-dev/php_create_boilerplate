@@ -8,3 +8,4 @@ uploads
 Config.php
 .env
 images
+schema_database

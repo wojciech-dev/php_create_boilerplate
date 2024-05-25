@@ -50,8 +50,29 @@ class BodyController
 
     public function update($id)
     {
-
+        $errorMessages = [];
+        $currentData = $this->db->getAllById('body', $id['id']);
+    
+        if (isset($_POST['submit'])) {
+            $postItems = PostData::getPostDataBody($currentData);
+    
+            if (isset($postItems['errors']) && $postItems['errors']) {
+                $errorMessages = $postItems['errors'];
+            } else {
+                $this->db->edit('body', $postItems, $id['id']);
+                header('Location: /admin/body/' . $id['id']);
+                exit;
+            }
+        }
+    
+        echo TwigConfig::getTwig()->render('admin/bodyForm.twig', [
+            'section' => $id['id'],
+            'edit' => $currentData,
+            'formAction' => 'update',
+            'error' => $errorMessages
+        ]);
     }
+    
 
     public function destroy($id)
     {

@@ -20,6 +20,7 @@ $router->with('/admin', function ($router, $prefix) {
         
         $router->respondWithController(['GET', $prefix.'/body/{id}', 'BodyController@home']);
         $router->respondWithController([Functions::checkRequestMethod(), $prefix.'/body/create/{id}', 'BodyController@create']);
+        $router->respondWithController([Functions::checkRequestMethod(), $prefix.'/body/update/{id}', 'BodyController@update']);
     }
     
     $router->respondWithController(['POST', $prefix.'/login', 'AdminController@login']);

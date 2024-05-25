@@ -24,7 +24,7 @@
 				<option value="0" {% if edit.status == 0 %} selected {% endif %}>Nieaktywne</option>
 			</select><br><br>
 			<ul>
-				<input type="radio" name="parent_id" value="0">
+				<input type="radio" name="parent_id" value="0" checked>
 				<label>Strona główna</label>
 				{% for item in data %}
 					{% if item.parent_id == 0 %}
