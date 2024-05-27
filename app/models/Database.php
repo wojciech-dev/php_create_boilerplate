@@ -4,6 +4,7 @@ namespace App\Models;
 
 use PDO;
 use PDOException;
+use Exception;
 
 class Database
 {
@@ -135,6 +136,28 @@ class Database
 		}
     }
 
+    //usuwanie wiersza
+    public function delete($table, $conditions)
+    {
+        $sql = "DELETE FROM $table WHERE ";
+        $sql .= implode(" AND ", array_map(function($key) {
+            return "$key = :$key";
+        }, array_keys($conditions)));
+
+        $stmt = $this->conn->prepare($sql);
+
+        // Tworzenie tablicy z parametrami dla execute
+        $params = [];
+        foreach ($conditions as $key => $value) {
+            // Sprawdź, czy $value jest tablicą, aby uniknąć konwersji do stringa
+            if (is_array($value)) {
+                throw new Exception("Invalid value for $key: arrays are not allowed");
+            }
+            $params[":$key"] = $value;
+        }
+
+        $stmt->execute($params);
+    }
 
 }
 
