@@ -27,30 +27,25 @@ class Photos {
             $photoType = $_FILES[$photoKey]['type'];
             $photoSize = $_FILES[$photoKey]['size'];
     
-            // Sprawdzenie rozmiaru pliku
             if ($photoSize > $maxSize) {
                 $errors[] = 'Plik ' . $photoName . ' przekracza maksymalny rozmiar (5MB)';
                 return null;
             }
     
-            // Sprawdzenie typu pliku
             if (!in_array($photoType, $allowedTypes)) {
                 $errors[] = 'Plik ' . $photoName . ' ma nieprawidłowy typ. Dozwolone są jedynie obrazy JPG, PNG lub PDF.';
                 return null;
             }
     
-            // Generowanie unikalnej nazwy pliku
             $extension = pathinfo($photoName, PATHINFO_EXTENSION);
             $uniqueName = uniqid('photo_') . '.' . $extension;
             $targetFile = $uploadDir . $uniqueName;
     
-            // Przesłanie pliku na serwer
             if (move_uploaded_file($_FILES[$photoKey]['tmp_name'], $targetFile)) {
-                // Usuwanie starego pliku, jeśli istnieje
                 if ($existingPhoto && file_exists($uploadDir . $existingPhoto)) {
                     unlink($uploadDir . $existingPhoto);
                 }
-                return $uniqueName; // Zwrócenie unikalnej nazwy pliku
+                return $uniqueName;
             } else {
                 $errors[] = 'Wystąpił błąd podczas przesyłania pliku ' . $photoName;
                 return null;
@@ -59,28 +54,14 @@ class Photos {
             $errors[] = 'Wystąpił błąd podczas przesyłania pliku ' . $_FILES[$photoKey]['name'];
         }
     
-        return null; // Brak przesłanego pliku lub wystąpił błąd podczas przesyłania
-    }
-
-    public function deleteChildRecords($parentId)
-    {
-        // Pobierz wszystkie rekordy, które mają parent_id równe podanemu id
-        $childRecords = $this->db->getAll('body', ['parent_id' => $parentId]);
-
-        foreach ($childRecords as $child) {
-            // Usuń wszystkie zdjęcia z serwera
-            $this->deletePhotos($child);
-
-            // Usuń rekord z tabeli body
-            $this->db->delete('body', ['id' => $child['id']]);
-        }
+        return null;
     }
     
+    //usuwanie zdjęc z serwera
     public function deletePhotos($record)
     {
         $photos = ['photo1', 'photo2', 'photo3', 'photo4'];
       
-        // Sprawdź, czy którykolwiek z pól zdjęć nie jest puste
         $hasPhotos = false;
         foreach ($photos as $photo) {
             if (!empty($record[$photo])) {
@@ -89,19 +70,15 @@ class Photos {
             }
         }
     
-        // Jeśli brak zdjęć, nie ma potrzeby kontynuować
         if (!$hasPhotos) {
             echo "Brak zdjęć do usunięcia.\n";
             return;
         }
     
-        // Usuń zdjęcia, jeśli istnieją
         foreach ($photos as $photo) {
             if (!empty($record[$photo])) {
-                // Zakładam, że zdjęcia są przechowywane w folderze "uploads" w katalogu głównym projektu
                 $imagePath = 'uploads/' . $record[$photo];
     
-                // Sprawdź, czy plik istnieje i czy można go usunąć
                 if (file_exists($imagePath)) {
                     if (unlink($imagePath)) {
                         echo "Usunięto zdjęcie: $imagePath\n";

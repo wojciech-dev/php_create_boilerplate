@@ -28,7 +28,7 @@ class BodyController
        
         echo TwigConfig::getTwig()->render('admin/body.twig', [
             'items' => $items,
-            'section' => $id['id']
+            'section' => $id['id'],
         ]);
     }
     
@@ -81,22 +81,14 @@ class BodyController
     //kasowanie wiersza
     public function destroy($id)
     {
-        // Pobierz dane rekordu
         $record = $this->db->getAllById('body', $id['id']);
-        //Functions::debug($record);
 
         if ($record) {
-            // Usuń wszystkie zdjęcia z serwera
             $this->photos->deletePhotos($record);
-
-            // Usuń rekord z tabeli body
             $this->db->delete('body', ['id' => $id['id']]);
-
-            echo "Usunięto rekord o id:". $id['id'];
-        } else {
-            echo "Rekord o id: $id nie istnieje.";
+            header('Location: /admin/body/' . $id['id']);
+            exit;
         }
     }
-
 
 }

@@ -48,6 +48,7 @@ class Database
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    
     //logowanie
     public function getUserByUsername($username)
     {
@@ -157,6 +158,53 @@ class Database
         }
 
         $stmt->execute($params);
+    }
+
+    //oblicza liczbę wierszy
+    public function countBodyRecordsLinkedToMenu($parentId)
+    {
+        $sql = "SELECT COUNT(*) AS total FROM body WHERE parent_id = :parent_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':parent_id', $parentId, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
+    
+    public function find($table, $conditions = [], $fields = ['*'])
+    {
+        // Przygotowanie listy pól do wyboru
+        $fieldsStr = implode(", ", $fields);
+
+        // Przygotowanie zapytania SQL
+        $sql = "SELECT $fieldsStr FROM $table";
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE ";
+            $sql .= implode(" AND ", array_map(function ($key) {
+                return "$key = :$key";
+            }, array_keys($conditions)));
+        }
+
+        $stmt = $this->conn->prepare($sql);
+
+        // Bindowanie parametrów do zapytania
+        foreach ($conditions as $key => &$value) {
+            $stmt->bindParam(":$key", $value);
+        }
+
+        // Wykonanie zapytania
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function resetChildrenParentId($table, $parentId)
+    {
+        $sql = "UPDATE $table SET parent_id = 0 WHERE parent_id = :parent_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':parent_id', $parentId);
+        $stmt->execute();
     }
 
 }

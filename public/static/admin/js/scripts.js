@@ -1,35 +1,14 @@
-//search form
-let inputSearch = document.querySelector('#search');
+document.addEventListener('DOMContentLoaded', () => {
+    const deleteButtons = document.querySelectorAll('.delete-button');
 
-function searchTask() {
-    let filter = inputSearch.value.toUpperCase();
-    let item = document.querySelectorAll('tbody tr');
-    for (let i = 0; i < item.length; i++) {
-        let results = item[i];
-        if (results) {
-            let txtValue = results.textContent || results.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                item[i].style.display = 'table-row';
-            } else {
-                item[i].style.display = 'none';
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', e => {
+            const id = button.dataset.id;
+            const confirmed = confirm('Czy na pewno chcesz usunąć ten element?');
+
+            if (confirmed) {
+                window.location.href = `/admin/body/delete/${id}`;
             }
-        }
-    }
-}
-
-
-if (inputSearch) {
-    inputSearch.addEventListener('input', searchTask);
-}
-
-//sortable
-
-$("#list").sortable({
-    opacity: 0.6,
-    cursor: 'move',
-    update: function () {
-        const section = $(this).attr("data-section");
-        const order = $(this).sortable("serialize") + '&update=update' + `&section=${section}`;
-        $.post("/admin/sortlist", order);
-    }
+        });
+    });
 });

@@ -5,16 +5,18 @@ use App\PostData;
 use App\Models\UserModel;
 use App\Models\Database;
 use App\Helpers\Functions;
+use App\Models\Photos;
 
-
-class AdminController 
+class MenuController 
 {
 
     private $db;
+    private $photos;
 
     public function __construct()
     {
         $this->db = new Database();
+        $this->photos = new Photos();
     }
 
     public function login()
@@ -32,12 +34,10 @@ class AdminController
         echo TwigConfig::getTwig()->render('admin/menu.twig', ['data' => $menuItems]);
     }
     
-    //tworzenie nowej pozycji menu
     public function create()
     {
         if (isset($_POST['submit'])) {
             $postItems = PostData::gePostDataMenu();
-            //Functions::debug($postItems);
             if (isset($postItems['errors']) && $postItems['errors']) {
                 $errorMessages = $postItems['errors'];
             } else {
@@ -53,7 +53,6 @@ class AdminController
         ]);
     }
 
-    //edycja menu
     public function update($id)
     {
         if (isset($_POST['submit'])) {
@@ -81,7 +80,18 @@ class AdminController
 
     public function destroy($id)
     {
-        echo "Usunięcie o id: $id";
+        //$record = $this->db->getAllById('menu', $id['id']);
+        $photos = $this->db->find('body', ['parent_id' => $id['id']]);
+
+        //Functions::debug($id['id']);
+        $this->photos->deletePhotos($photos);
+        $this->db->delete('body', ['parent_id' => $id['id']]);
+        $this->db->delete('menu', ['id' => $id['id']]);
+        $this->db->resetChildrenParentId('menu', $id['id']);
+
+            header('Location: /admin/menu');
+            exit;
+        
     }
 
     public function logout()

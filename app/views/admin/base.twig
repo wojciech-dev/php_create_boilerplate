@@ -7,16 +7,9 @@
 			{% block title %}Dashboard
 			{% endblock %}
 		</title>
-		<style>
-			body {
-				background: silver;
-			}
-
-			ul {
-				list-style: none;
-			}
-		</style>
+		<link rel="stylesheet" href="/static/admin/css/style.css">
 		<body>
+		<h1>to jest admin/base.twig</h1>
 			<ul>
 				<li>
 					<a href="/admin/logout">Wyloguj</a>
@@ -31,6 +24,7 @@
 			<main>
 				{% block content %}{% endblock %}
 			</main>
+			<script src="/static/admin/js/scripts.js"></script>
 		</body>
 	</head>
 </html>
