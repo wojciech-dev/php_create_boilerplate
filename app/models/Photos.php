@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Database;
 use App\Helpers\Functions;
+use Exception;
 
 class Photos {
 
@@ -92,6 +93,48 @@ class Photos {
         }
     }
     
-    
+    public function deleteMenuAndRelatedBodies($menuId)
+    {
+        $conn = $this->db->getConnection();
+
+        try {
+            $conn->beginTransaction();
+
+            // Usuń wszystkie rekordy 'body' powiązane z danym menuId
+            $this->deleteBodies($menuId);
+
+            // Usuń rekord z tabeli 'menu'
+            $this->db->delete('menu', ['id' => $menuId]);
+
+            $conn->commit();
+            echo 'Menu and related records deleted successfully';
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo 'Failed to delete menu and related bodies: ' . $e->getMessage();
+        }
+    }
+
+    private function deleteBodies($menuId)
+    {
+        // Pobierz wszystkie rekordy 'body' powiązane z danym menuId
+        $relatedBodies = $this->db->find('body', ['parent_id' => $menuId], ['id', 'photo1', 'photo2', 'photo3', 'photo4']);
+
+        // Iteracyjne usunięcie rekordów 'body' i ich powiązanych zdjęć
+        foreach ($relatedBodies as $body) {
+            // Usuń zdjęcia powiązane z rekordem 'body'
+            for ($i = 1; $i <= 4; $i++) {
+                $photoField = 'photo' . $i;
+                if (!empty($body[$photoField])) {
+                    $photoPath = 'uploads/' . $body[$photoField];
+                    if (file_exists($photoPath)) {
+                        unlink($photoPath);
+                    }
+                }
+            }
+
+            // Usuń rekord 'body'
+            $this->db->delete('body', ['id' => $body['id']]);
+        }
+    }
         
 }

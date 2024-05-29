@@ -29,6 +29,7 @@ class Database
     {
         return $this->conn;
     }
+    
     //ogólne pobieranie rekordów
     public function getAll($table, $conditions = [], $fields = ['*'])
     {

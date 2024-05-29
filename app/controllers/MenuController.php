@@ -80,13 +80,13 @@ class MenuController
 
     public function destroy($id)
     {
-        //$record = $this->db->getAllById('menu', $id['id']);
-        $photos = $this->db->find('body', ['parent_id' => $id['id']]);
+        $record = $this->db->getAllById('menu', $id['id']);
+   
 
-        //Functions::debug($id['id']);
-        $this->photos->deletePhotos($photos);
-        $this->db->delete('body', ['parent_id' => $id['id']]);
-        $this->db->delete('menu', ['id' => $id['id']]);
+        //Functions::debug($record['id']);
+        $this->photos->deleteMenuAndRelatedBodies($record['id']);
+        //$this->db->delete('body', ['parent_id' => $id['id']]);
+        //$this->db->delete('menu', ['id' => $id['id']]);
         $this->db->resetChildrenParentId('menu', $id['id']);
 
             header('Location: /admin/menu');
