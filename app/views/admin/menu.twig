@@ -12,7 +12,7 @@
 		<li>{{ item.title }}
 			<a href="/admin/body/{{ item.id }}">Body</a>
 			<a href="/admin/menu/update/{{ item.id }}">Edit</a>
-			<a href="/admin/menu/delete/{{ item.id }}">Delete</a>
+			<button class="delete-menu-button"  data-id="{{ item.id }}">Delete</button>
 		</li>
 		{% set children = data|filter(child => child.parent_id == item.id) %}
 		{% if children is not empty %}
