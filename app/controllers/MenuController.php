@@ -30,7 +30,7 @@ class MenuController
 
     public function home()
     {
-        $menuItems = $this->db->getAll('menu');
+        $menuItems = $this->db->find('menu');
         $counts = [];
     
         foreach ($menuItems as $item) {
@@ -55,7 +55,7 @@ class MenuController
             }
         }
 
-        $menuItems = $this->db->getAllMenusTitle();
+        $menuItems = $this->db->find('menu', [],['id', 'parent_id', 'title']);
         echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
             'data' => $menuItems, 
             'error' => $errorMessages ?? []
@@ -67,8 +67,6 @@ class MenuController
         if (isset($_POST['submit'])) {
             $postItems = PostData::gePostDataMenu();
             
-
-            Functions::debug($postItems);
             if (isset($postItems['errors']) && $postItems['errors']) {
                 $errorMessages = $postItems['errors'];
             } else {
@@ -77,8 +75,8 @@ class MenuController
             }
         }
 
-        $menuById = $this->db->getAllById('menu', $id['id']);
-        $menuItems = $this->db->getAllMenusTitle();
+        $menuById = $this->db->find('menu', ['id' => $id['id']], null, true);
+        $menuItems = $this->db->find('menu', [],['id', 'parent_id', 'title']);
         echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
             'data' => $menuItems, 
             'edit' => $menuById, 
@@ -89,23 +87,15 @@ class MenuController
 
     public function destroy($id)
     {
-        $record = $this->db->getAllById('menu', $id['id']);
-   
-
-        //Functions::debug($record['id']);
+        $record = $this->db->find('menu', ['id' => $id['id']], null, true);
         $this->photos->deleteMenuAndRelatedBodies($record['id']);
-        //$this->db->delete('body', ['parent_id' => $id['id']]);
-        //$this->db->delete('menu', ['id' => $id['id']]);
         $this->db->resetChildrenParentId('menu', $id['id']);
-
-            header('Location: /admin/menu');
-            exit;
-        
+        header('Location: /admin/menu');
+        exit;
     }
 
     public function logout()
     {
-
         unset($_SESSION['logged_in']);
         session_destroy();
         header('Location: /admin');

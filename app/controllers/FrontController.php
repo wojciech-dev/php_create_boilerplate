@@ -40,7 +40,7 @@ class FrontController
     //controler uruchmiany na stronie głownej frontu http://localhost:8888/
     public function home()
     {
-        $menuData =  $this->db->getAll('menu');
+        $menuData =  $this->db->find('menu');
         $menuGenerator = new MenuGenerator($menuData);
 
       

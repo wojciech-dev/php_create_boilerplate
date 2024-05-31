@@ -24,7 +24,7 @@ class BodyController
 
     public function home($id)
     {
-        $items = $this->db->getAll('body', ['parent_id' => $id['id']]);
+        $items = $this->db->find('body', ['parent_id' => $id['id']], null);
        
         echo TwigConfig::getTwig()->render('admin/body.twig', [
             'items' => $items,
@@ -55,7 +55,7 @@ class BodyController
     public function update($id)
     {
         $errorMessages = [];
-        $currentData = $this->db->getAllById('body', $id['id']);
+        $currentData = $this->db->find('body', ['id' => $id['id']], null, true);
     
         if (isset($_POST['submit'])) {
             $postItems = $this->data->getPostDataBody($currentData);
@@ -81,7 +81,7 @@ class BodyController
     //kasowanie wiersza
     public function destroy($id)
     {
-        $record = $this->db->getAllById('body', $id['id']);
+        $record = $this->db->find('body', ['id' => $id['id']], null, true);
 
         if ($record) {
             $this->photos->deletePhotos($record);

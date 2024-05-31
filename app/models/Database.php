@@ -30,13 +30,17 @@ class Database
         return $this->conn;
     }
     
-    //ogólne pobieranie rekordów
-    public function getAll($table, $conditions = [], $fields = ['*'])
+    //ogolne pobieranie rekordów z warunkami
+    public function find($table, $conditions = [], $fields = null, $singleRecord = false)
     {
-        $fieldsStr = implode(", ", $fields);
+        if (is_null($fields)) {
+            $fieldsStr = '*';
+        } else {
+            $fieldsStr = implode(", ", $fields);
+        }
 
         $sql = "SELECT $fieldsStr FROM $table";
-
+        
         if (!empty($conditions)) {
             $sql .= " WHERE ";
             $sql .= implode(" AND ", array_map(function($key) {
@@ -44,35 +48,15 @@ class Database
             }, array_keys($conditions)));
         }
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($conditions);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    
-    //logowanie
-    public function getUserByUsername($username)
-    {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");
-        $stmt->execute([$username]);
-        return $stmt->fetch();
-    }
-
-    //budowanie drzewka mneu
-    public function getAllMenusTitle()
-    {
-        $stmt = $this->conn->prepare("SELECT id, parent_id, title FROM menu");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    //do wyswietlania w formularzu edycji rekordu
-    public function getAllById($tablename, $id) {
         try {
-            $query = $this->conn->prepare("SELECT * FROM $tablename WHERE id = :id");
-            $query->bindValue(":id", $id, PDO::PARAM_INT);
-            $query->execute();
-            return $query->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($conditions);
+            
+            if ($singleRecord) {
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            } else {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
         } catch (PDOException $e) {
             echo 'Error: ' . $e->getMessage();
             return false;
@@ -147,11 +131,8 @@ class Database
         }, array_keys($conditions)));
 
         $stmt = $this->conn->prepare($sql);
-
-        // Tworzenie tablicy z parametrami dla execute
         $params = [];
         foreach ($conditions as $key => $value) {
-            // Sprawdź, czy $value jest tablicą, aby uniknąć konwersji do stringa
             if (is_array($value)) {
                 throw new Exception("Invalid value for $key: arrays are not allowed");
             }
@@ -161,7 +142,7 @@ class Database
         $stmt->execute($params);
     }
 
-    //oblicza liczbę wierszy
+    //oblicza liczbę wierszy i zwraca liczbę
     public function countBodyRecordsLinkedToMenu($menuId)
     {
         $sql = "SELECT COUNT(*) as count FROM body WHERE parent_id = :parent_id";
@@ -171,34 +152,7 @@ class Database
         return $result['count'];
     }
     
-    public function find($table, $conditions = [], $fields = ['*'])
-    {
-        // Przygotowanie listy pól do wyboru
-        $fieldsStr = implode(", ", $fields);
-
-        // Przygotowanie zapytania SQL
-        $sql = "SELECT $fieldsStr FROM $table";
-
-        if (!empty($conditions)) {
-            $sql .= " WHERE ";
-            $sql .= implode(" AND ", array_map(function ($key) {
-                return "$key = :$key";
-            }, array_keys($conditions)));
-        }
-
-        $stmt = $this->conn->prepare($sql);
-
-        // Bindowanie parametrów do zapytania
-        foreach ($conditions as $key => &$value) {
-            $stmt->bindParam(":$key", $value);
-        }
-
-        // Wykonanie zapytania
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
+    //po usunieciu rekordu ustawia parent_id na 0 dla dzieci
     public function resetChildrenParentId($table, $parentId)
     {
         $sql = "UPDATE $table SET parent_id = 0 WHERE parent_id = :parent_id";

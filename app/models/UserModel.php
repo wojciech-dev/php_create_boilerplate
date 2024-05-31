@@ -15,7 +15,7 @@ class UserModel
 
     public function login($username, $password)
     {
-        $user = $this->db->getUserByUsername($username);
+        $user = $this->db->find('users', ['username' => $username], null, true);
 
         if (!$user) {
             return 'Nieprawidłowy login lub hasło';
