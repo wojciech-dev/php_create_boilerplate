@@ -162,14 +162,13 @@ class Database
     }
 
     //oblicza liczbę wierszy
-    public function countBodyRecordsLinkedToMenu($parentId)
+    public function countBodyRecordsLinkedToMenu($menuId)
     {
-        $sql = "SELECT COUNT(*) AS total FROM body WHERE parent_id = :parent_id";
+        $sql = "SELECT COUNT(*) as count FROM body WHERE parent_id = :parent_id";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':parent_id', $parentId, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute(['parent_id' => $menuId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['total'];
+        return $result['count'];
     }
     
     public function find($table, $conditions = [], $fields = ['*'])

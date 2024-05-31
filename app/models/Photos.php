@@ -58,7 +58,7 @@ class Photos {
         return null;
     }
     
-    //usuwanie zdjęc z serwera - dotyczy usuwania rekordu z bodu
+    //usuwanie zdjęc z serwera - dotyczy usuwania rekordu z tabli body
     public function deletePhotos($record)
     {
         $photos = ['photo1', 'photo2', 'photo3', 'photo4'];
@@ -100,13 +100,8 @@ class Photos {
 
         try {
             $conn->beginTransaction();
-
-            // Usuń wszystkie rekordy 'body' powiązane z danym menuId
             $this->deleteBodies($menuId);
-
-            // Usuń rekord z tabeli 'menu'
             $this->db->delete('menu', ['id' => $menuId]);
-
             $conn->commit();
             echo 'Menu and related records deleted successfully';
         } catch (Exception $e) {
@@ -115,14 +110,13 @@ class Photos {
         }
     }
 
+    /*usuwanie rekordów z tabli body powiazanych relacją
+    rekurencja do funkcji deleteMenuAndRelatedBodies()
+    */
     private function deleteBodies($menuId)
     {
-        // Pobierz wszystkie rekordy 'body' powiązane z danym menuId
         $relatedBodies = $this->db->find('body', ['parent_id' => $menuId], ['id', 'photo1', 'photo2', 'photo3', 'photo4']);
-
-        // Iteracyjne usunięcie rekordów 'body' i ich powiązanych zdjęć
         foreach ($relatedBodies as $body) {
-            // Usuń zdjęcia powiązane z rekordem 'body'
             for ($i = 1; $i <= 4; $i++) {
                 $photoField = 'photo' . $i;
                 if (!empty($body[$photoField])) {
@@ -132,8 +126,6 @@ class Photos {
                     }
                 }
             }
-
-            // Usuń rekord 'body'
             $this->db->delete('body', ['id' => $body['id']]);
         }
     }

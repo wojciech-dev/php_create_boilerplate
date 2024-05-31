@@ -5,31 +5,32 @@
 {% endblock %}
 
 {% block content %}
-	<h2>Menu Items</h2>
+    <h2>Menu Items</h2>
 
+    {% macro renderNestedList(item, data, counts) %}
+        <li>{{ item.title }} ({{ counts[item.id] | default(0) }} records)
+            <a href="/admin/body/{{ item.id }}">Body</a>
+            <a href="/admin/menu/update/{{ item.id }}">Edit</a>
+            <button class="delete-menu-button"  data-id="{{ item.id }}">Delete</button>
+        </li>
+        {% set children = data|filter(child => child.parent_id == item.id) %}
+        {% if children is not empty %}
+            <ul>
+                {% for child in children %}
+                    {{ _self.renderNestedList(child, data, counts) }}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endmacro %}
 
-	{% macro renderNestedList(item, data) %}
-		<li>{{ item.title }}
-			<a href="/admin/body/{{ item.id }}">Body</a>
-			<a href="/admin/menu/update/{{ item.id }}">Edit</a>
-			<button class="delete-menu-button"  data-id="{{ item.id }}">Delete</button>
-		</li>
-		{% set children = data|filter(child => child.parent_id == item.id) %}
-		{% if children is not empty %}
-			<ul>
-				{% for child in children %}
-					{{ _self.renderNestedList(child, data) }}
-				{% endfor %}
-			</ul>
-		{% endif %}
-	{% endmacro %}
-
-	<ul>
-		{% for item in data %}
-			{% if item.parent_id == 0 %}
-				{{ _self.renderNestedList(item, data) }}
-			{% endif %}
-		{% endfor %}
-	</ul>
-
+    <ul>
+        {% for item in data %}
+            {% if item.parent_id == 0 %}
+                {{ _self.renderNestedList(item, data, counts) }}
+            {% endif %}
+        {% endfor %}
+    </ul>
 {% endblock %}
+
+
+

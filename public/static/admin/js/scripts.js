@@ -1,3 +1,4 @@
+//funkcja obsługująca przycisk usuń wiersz. Pokazuje alert.
 document.addEventListener('DOMContentLoaded', () => {
     const deleteBodyButtons = document.querySelectorAll('.delete-body-button');
     const deleteMenuButtons = document.querySelectorAll('.delete-menu-button');

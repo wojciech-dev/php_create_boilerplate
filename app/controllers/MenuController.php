@@ -30,8 +30,17 @@ class MenuController
 
     public function home()
     {
-        $menuItems =  $this->db->getAll('menu');
-        echo TwigConfig::getTwig()->render('admin/menu.twig', ['data' => $menuItems]);
+        $menuItems = $this->db->getAll('menu');
+        $counts = [];
+    
+        foreach ($menuItems as $item) {
+            $counts[$item['id']] = $this->db->countBodyRecordsLinkedToMenu($item['id']);
+        }
+    
+        echo TwigConfig::getTwig()->render('admin/menu.twig', [
+            'data' => $menuItems,
+            'counts' => $counts
+        ]);
     }
     
     public function create()
