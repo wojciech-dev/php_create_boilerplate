@@ -15,7 +15,7 @@
         </li>
         {% set children = data|filter(child => child.parent_id == item.id) %}
         {% if children is not empty %}
-            <ul>
+            <ul class="nested">
                 {% for child in children %}
                     {{ _self.renderNestedList(child, data, counts) }}
                 {% endfor %}
@@ -23,7 +23,7 @@
         {% endif %}
     {% endmacro %}
 
-    <ul>
+    <ul class="nested">
         {% for item in data %}
             {% if item.parent_id == 0 %}
                 {{ _self.renderNestedList(item, data, counts) }}

@@ -9,9 +9,11 @@
 	{% if formAction == 'update' %}
 		<h2>edytuj</h2>
 		<form action="/admin/body/update/{{ edit.id }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" id="parent_id" name="parent_id" value="{{ edit.parent_id }}">
 		{% else %}
 			<h2>Dodaj</h2>
 			<form action="/admin/body/create/{{ section }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
 			{% endif %}
 			    <!-- Dodaj obsługę błędów -->
     {% if error %}
@@ -22,7 +24,7 @@
         </ul>
     {% endif %}
 
-    <input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
+    
 
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" value="{{ edit.name }}"><br>

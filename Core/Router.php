@@ -25,7 +25,28 @@ class Router
             'controller' => $controllerName,
             'method_name' => $controllerMethod
         ];
+    }
 
+    public function respondWithControllerMultiple($method, $baseRoute, $controller, $depth)
+    {
+        if ($depth === 0) {
+            $this->respondWithController([$method, $baseRoute, $controller . '@index']);
+            $this->respondWithController([$method, $baseRoute . ',more-{id}', $controller . '@show']);
+        } else {
+            $this->addNestedRoutes($method, $baseRoute, $controller, $depth);
+        }
+    }
+
+    private function addNestedRoutes($method, $baseRoute, $controller, $depth)
+    {
+        for ($i = 0; $i <= $depth; $i++) {
+            $route = $baseRoute;
+            for ($j = 1; $j <= $i; $j++) {
+                $route .= '/{param' . $j . '}';
+            }
+            $this->respondWithController([$method, $route, $controller . '@index']);
+            $this->respondWithController([$method, $route . ',more-{id}', $controller . '@show']);
+        }
     }
 
     public function dispatch()
@@ -34,51 +55,47 @@ class Router
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
         foreach ($this->routes as $route) {
-            // Sprawdzanie, czy metoda i ścieżka pasują
             if ($route['method'] === $method && preg_match($this->compileRouteRegex($route['route']), $uri, $matches)) {
-                // Wywołanie kontrolera i metody
                 $controllerName = $route['controller'];
                 $controllerMethod = $route['method_name'];
-
-                // Sprawdzenie, czy kontroler istnieje
                 if (class_exists($controllerName)) {
                     $controllerInstance = new $controllerName();
-                    // Sprawdzenie, czy metoda kontrolera istnieje
                     if (method_exists($controllerInstance, $controllerMethod)) {
-                        // Pobieranie parametrów zagnieżdżonych adresów URL
                         $params = [];
                         foreach ($matches as $key => $value) {
                             if (!is_numeric($key)) {
                                 $params[$key] = $value;
                             }
                         }
-                        // Wywołanie metody kontrolera z przekazanymi parametrami
+                      
                         $controllerInstance->$controllerMethod($params);
                         return;
                     } else {
-                        echo TwigConfig::getTwig()->render('404.twig');
+                        $this->renderNotFound();
                         return;
                     }
                 } else {
-                    echo TwigConfig::getTwig()->render('404.twig');
+                    $this->renderNotFound();
                     return;
                 }
             }
         }
 
+        $this->renderNotFound();
+    }
+
+    private function renderNotFound()
+    {
         echo TwigConfig::getTwig()->render('404.twig');
     }
 
     private function compileRouteRegex($route)
     {
-        // Zamiana parametrów na regex
         $regex = preg_replace_callback('#\{(\w+)\}#', function ($matches) {
             return "(?P<{$matches[1]}>[\w-]+)";
         }, $route);
-
-        // Dodanie anchorów dla całego ciągu
         $regex = "#^" . $regex . "$#";
-
         return $regex;
     }
 }
+

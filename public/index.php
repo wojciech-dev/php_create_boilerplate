@@ -32,11 +32,8 @@ $router->with('/admin', function ($router, $prefix) {
 
 
 // Dodanie tras do kontrolera artykułów
-$router->respondWithController(['GET', '/', 'FrontController@home']);
-$router->respondWithController(['GET', '/{title}', 'FrontController@index']);
-$router->respondWithController(['GET', '/{title}/{subtitle}', 'FrontController@index']);
-$router->respondWithController(['GET', '/{title}/{subtitle}/{subsubtitle}', 'FrontController@index']);
-
+$router->respondWithControllerMultiple('GET', '/', 'FrontController@home', 0);
+$router->respondWithControllerMultiple('GET', '/{title}', 'FrontController', 4);
 
 
 
@@ -45,9 +42,3 @@ $router->dispatch();
 
 
 //Functions::mini_audyt_strony($_SERVER['PHP_SELF']);
-
-/*
-http://mycms.vot.pl/admin/menu
-http://mycms.vot.pl/admin/menu/create
-http://mycms.vot.pl/admin/menu/edit/1
-*/

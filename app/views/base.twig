@@ -9,16 +9,37 @@
 		 <link rel="stylesheet" href="/static/front/css/style.css">
 	</head>
 	<body>
-	<h1>to jest front/base.twig</h1>
+	<h1>front/base.twig</h1>
 		<main>
-			<menu>
-				<a href="/admin">Admin</a>
-				|
-				<a href="/">Strona główna</a>
-				|
-				<a href="/admin/menu">Tylko po zalogowaniu</a>
 
-			</menu>
+	<ul>
+		{% for item in menu %}
+			<li>
+				<a href="/{{ item.url }}">{{ item.title }}</a>
+				{% if item.children %}
+					<ul>
+						{% for child in item.children %}
+							{{ _self.renderMenuItem(child) }}
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</li>
+		{% endfor %}
+	</ul>
+
+	{% macro renderMenuItem(item) %}
+		<li>
+			<a href="/{{ item.url }}">{{ item.title }}</a>
+			{% if item.children %}
+				<ul>
+					{% for child in item.children %}
+						{{ _self.renderMenuItem(child) }}
+					{% endfor %}
+				</ul>
+			{% endif %}
+		</li>
+	{% endmacro %}
+
 
 			{% block content %}{% endblock %}
 		</main>

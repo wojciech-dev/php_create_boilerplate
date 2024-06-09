@@ -59,12 +59,11 @@ class BodyController
     
         if (isset($_POST['submit'])) {
             $postItems = $this->data->getPostDataBody($currentData);
-    
             if (isset($postItems['errors']) && $postItems['errors']) {
                 $errorMessages = $postItems['errors'];
             } else {
                 $this->db->edit('body', $postItems, $id['id']);
-                header('Location: /admin/body/' . $id['id']);
+                header('Location: /admin/body/' . $currentData['parent_id']);
                 exit;
             }
         }
@@ -86,7 +85,7 @@ class BodyController
         if ($record) {
             $this->photos->deletePhotos($record);
             $this->db->delete('body', ['id' => $id['id']]);
-            header('Location: /admin/body/' . $id['id']);
+            header('Location: /admin/body/' . $record ['parent_id']);
             exit;
         }
     }
