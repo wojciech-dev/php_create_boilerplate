@@ -6,17 +6,27 @@ use App\Models\UserModel;
 use App\Models\Database;
 use App\Helpers\Functions;
 use App\Models\Photos;
+use App\Helpers\MenuGenerator;
 
 class MenuController 
 {
 
     private $db;
     private $photos;
+    private $menu;
 
     public function __construct()
     {
         $this->db = new Database();
         $this->photos = new Photos();
+        $this->menu = $this->generateMenu();
+    }
+
+    private function generateMenu()
+    {
+        $menuData = $this->db->find('menu');
+        $menuGenerator = new MenuGenerator($menuData);
+        return $menuGenerator->generateMenu();
     }
 
     public function login()
@@ -25,7 +35,9 @@ class MenuController
         $password = $_POST['password'];
         $userModel = new UserModel();
         $error = $userModel->login($username, $password);
-        echo TwigConfig::getTwig()->render('front/login.twig', ['error' => $error]);
+        echo TwigConfig::getTwig()->render('front/login.twig', [
+            'error' => $error,
+        ]);
     }
 
     public function home()
@@ -39,7 +51,8 @@ class MenuController
     
         echo TwigConfig::getTwig()->render('admin/menu.twig', [
             'data' => $menuItems,
-            'counts' => $counts
+            'counts' => $counts,
+            'menu' => $this->menu
         ]);
     }
     
@@ -58,7 +71,8 @@ class MenuController
         $menuItems = $this->db->find('menu', [],['id', 'parent_id', 'title']);
         echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
             'data' => $menuItems, 
-            'error' => $errorMessages ?? []
+            'error' => $errorMessages ?? [],
+            'menu' => $this->menu
         ]);
     }
 
@@ -81,7 +95,8 @@ class MenuController
             'data' => $menuItems, 
             'edit' => $menuById, 
             'formAction' => 'update',
-            'error' => $errorMessages ?? []
+            'error' => $errorMessages ?? [],
+            'menu' => $this->menu
         ]);
     }
 

@@ -5,51 +5,33 @@
 {% endblock %}
 
 {% block content %}
-
+<div class="form">
 	{% if formAction == 'update' %}
-		<h2>edytuj</h2>
-		<form action="/admin/menu/update/{{ edit.id }}" method="post">
+			<h6>Edit</h6>
+			<form action="/admin/menu/update/{{ edit.id }}" method="post">
 		{% else %}
-			<h2>Dodaj</h2>
+			<h6>Add item</h6>
 			<form action="/admin/menu/create" method="post">
-			{% endif %}
+	{% endif %}
 			<input type="hidden" name="id" value="{{ edit.id }}">
-			<label for="title">Tytuł:</label><br>
-			<input type="text" id="title" name="title" value='{{ edit.title }}'><br><br>
-			<p style="color: red;">{{ error[0] }}</p>
+			<div class="row">
+				<label for="title">Tytuł:</label>
+				<input type="text" id="title" name="title" value='{{ edit.title }}'>
+				<p class="error_message">{{ error[0] }}</p>
+			</div>
+			<div class="row">
+				<label for="status">Status:</label>
+				<select id="status" name="status">
+					<option value="1" {% if edit.status == 1 %} selected {% endif %}>Aktywne</option>
+					<option value="0" {% if edit.status == 0 %} selected {% endif %}>Nieaktywne</option>
+				</select>
+			</div>
+			<div class="row">
+				<h4>Menu:</h4>
+			</div>
+			{% include 'admin/menuInputRadio.twig' %}
 
-			<label for="status">Status:</label><br>
-			<select id="status" name="status">
-				<option value="1" {% if edit.status == 1 %} selected {% endif %}>Aktywne</option>
-				<option value="0" {% if edit.status == 0 %} selected {% endif %}>Nieaktywne</option>
-			</select><br><br>
-			<ul>
-				<input type="radio" name="parent_id" value="0" checked>
-				<label>Strona główna</label>
-				{% for item in data %}
-					{% if item.parent_id == 0 %}
-						{{ _self.renderNestedList(item, data, edit) }}
-					{% endif %}
-				{% endfor %}
-			</ul>
-
-
-			{% macro renderNestedList(item, data, edit) %}
-				<li>
-					<input type="radio" name="parent_id" value="{{ item.id }}" {% if item.id == edit.id %} checked {% endif %}>
-					<label>{{ item.title }}</label>
-				</li>
-				{% set children = data|filter(child => child.parent_id == item.id) %}
-				{% if children is not empty %}
-					<ul>
-						{% for child in children %}
-							{{ _self.renderNestedList(child, data, edit) }}
-						{% endfor %}
-					</ul>
-				{% endif %}
-			{% endmacro %}
-
-			<button type="submit" name="submit">Dodaj</button>
+			<button type="submit" class="green-button" name="submit">Add</button>
 		</form>
-
+</div>
 	{% endblock %}

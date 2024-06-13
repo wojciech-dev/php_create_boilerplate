@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>
-			{% block title %}Dashboard
-			{% endblock %}
-		</title>
-		<link rel="stylesheet" href="/static/admin/css/style.css">
-		<body>
-		<h1>to jest admin/base.twig</h1>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+	{% block title %}Dashboard
+	{% endblock %}
+</title>
+<link rel="stylesheet" href="/static/admin/css/style.css">
+<body>
+    <header>
+		<a href="/admin/menu" class="logo">WKCMS</a>
+		<nav>
 			<ul>
-				<li>
-					<a href="/admin/logout">Wyloguj</a>
-				</li>
-				<li>
-					<a href="/admin/menu/create">Dodaj menu</a>
-				</li>
-				<li>
-					<a href="/admin/menu">Menu</a>
-				</li>
+				<li><a href="/admin/menu">MENU</a></li>
+				<li><a href="/" target="_blank">PREVIEW</a></li>
 			</ul>
+		</nav>
+		<div class="user-info">
+			<p>Wojciech Kondraciuk</p>
+			<a href="/admin/logout">Log out</a>
+		</div>
+    </header>
+
+	<div class="container">
+		<div class="left_column">
+		<h6>Menu</h6>
+			{% include './menu.twig' %}
+			<a href="/admin/menu/create" class="green-button">Add menu item</a>
+		</div>
+		<div class="right_column">
 			<main>
 				{% block content %}{% endblock %}
 			</main>
-			<script src="/static/admin/js/scripts.js"></script>
-		</body>
-	</head>
+		</div>
+	</div>
+
+
+    <footer>footer</footer>
+
+	<script src="/static/admin/js/scripts.js"></script>
+</body>
+</head>
 </html>

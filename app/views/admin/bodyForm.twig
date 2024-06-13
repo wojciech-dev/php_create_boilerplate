@@ -5,44 +5,47 @@
 {% endblock %}
 
 {% block content %}
-
+<div class="form">
 	{% if formAction == 'update' %}
-		<h2>edytuj</h2>
+		<h6>Edit record - <span>{{ secionName }}</span></h6>
 		<form action="/admin/body/update/{{ edit.id }}" method="post" enctype="multipart/form-data">
         <input type="hidden" id="parent_id" name="parent_id" value="{{ edit.parent_id }}">
-		{% else %}
-			<h2>Dodaj</h2>
-			<form action="/admin/body/create/{{ section }}" method="post" enctype="multipart/form-data">
-            <input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
-			{% endif %}
-			    <!-- Dodaj obsługę błędów -->
+	{% else %}
+        <h6>Add record - <span>{{ secionName }}</span></h6>
+        <form action="/admin/body/create/{{ section }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
+	{% endif %}
     {% if error %}
-        <ul>
+        <div class="error">
             {% for message in error %}
-                <li>{{ message }}</li>
+                <p class="error_message">{{ message }}</p>
             {% endfor %}
-        </ul>
+        </div>
     {% endif %}
+    <div class="row">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ edit.name }}"><br>
+    </div>
+    <div class="row">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" value="{{ edit.title }}"><br>
+    </div>
 
-    
+    <div class="row">
+    <textarea id="description" name="description">{{ edit.description }}</textarea>
+    </div>
 
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" value="{{ edit.name }}"><br>
+    <div class="row">
+        <label for="status">Status:</label>
+        <input type="checkbox" id="status" name="status" {% if edit.status == 1 %}checked{% endif %}><br>
+    </div>
 
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="title" value="{{ edit.title }}"><br>
+    <div class="row">
+        <label for="more">More:</label>
+        <input type="checkbox" id="more" name="more" {% if edit.more == 1 %}checked{% endif %}><br>
+    </div>
 
-    <label for="description">Description:</label>
-    <textarea id="description" name="description">{{ edit.description }}</textarea><br>
-
-    <label for="status">Status:</label>
-    <input type="checkbox" id="status" name="status" {% if edit.status == 1 %}checked{% endif %}><br>
-
-    <label for="more">More:</label>
-    <input type="checkbox" id="more" name="more" {% if edit.more == 1 %}checked{% endif %}><br>
-
-
-    <div>
+    <div class="row">
         <label for="photo1">Photo 1:</label>
         {% if edit.photo1 %}
             <div>
@@ -52,7 +55,7 @@
         <input type="file" name="photo1">
     </div>
 
-    <div>
+    <div class="row">
         <label for="photo2">Photo 2:</label>
         {% if edit.photo2 %}
             <div>
@@ -62,7 +65,7 @@
         <input type="file" name="photo2">
     </div>
 
-    <div>
+    <div class="row">
         <label for="photo3">Photo 3:</label>
         {% if edit.photo3 %}
             <div>
@@ -72,7 +75,7 @@
         <input type="file" name="photo3">
     </div>
 
-    <div>
+    <div class="row">
         <label for="photo4">Photo 4:</label>
         {% if edit.photo4 %}
             <div>
@@ -81,9 +84,19 @@
         {% endif %}
         <input type="file" name="photo4">
     </div>
+    <div class="buttons">
+		<button type="submit" name="submit" class="green-button">Save</button>
+        <a href="/admin/body/{{ section }}" class="red-button">Cancel</a>
+    </div>
+	</form>
+    
+</div>
 
-			<button type="submit" name="submit">Save</button>
-		</form>
-
-
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+    <script>
+    CKEDITOR.replace('description', {
+        height: 400,
+        width: '100%'
+    });
+    </script>
 	{% endblock %}

@@ -1,0 +1,26 @@
+<div class="menu_three">
+<ul>
+    <input type="radio" id="option0" name="parent_id" value="0" checked>
+    <label for="option0">Strona główna</label>
+    {% for item in data %}
+        {% if item.parent_id == 0 %}
+            {{ _self.renderNestedList(item, data, edit) }}
+        {% endif %}
+    {% endfor %}
+</ul>
+
+{% macro renderNestedList(item, data, edit) %}
+    <li>
+        <input type="radio" id="option{{ item.id }}" name="parent_id" value="{{ item.id }}" {% if item.id == edit.id %} checked {% endif %}>
+        <label for="option{{ item.id }}">{{ item.title }}</label>
+    </li>
+    {% set children = data|filter(child => child.parent_id == item.id) %}
+    {% if children is not empty %}
+        <ul>
+            {% for child in children %}
+                {{ _self.renderNestedList(child, data, edit) }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+</div>

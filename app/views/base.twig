@@ -12,33 +12,7 @@
 	<h1>front/base.twig</h1>
 		<main>
 
-	<ul>
-		{% for item in menu %}
-			<li>
-				<a href="/{{ item.url }}">{{ item.title }}</a>
-				{% if item.children %}
-					<ul>
-						{% for child in item.children %}
-							{{ _self.renderMenuItem(child) }}
-						{% endfor %}
-					</ul>
-				{% endif %}
-			</li>
-		{% endfor %}
-	</ul>
-
-	{% macro renderMenuItem(item) %}
-		<li>
-			<a href="/{{ item.url }}">{{ item.title }}</a>
-			{% if item.children %}
-				<ul>
-					{% for child in item.children %}
-						{{ _self.renderMenuItem(child) }}
-					{% endfor %}
-				</ul>
-			{% endif %}
-		</li>
-	{% endmacro %}
+	{% include 'menu.twig' %}
 
 
 			{% block content %}{% endblock %}
