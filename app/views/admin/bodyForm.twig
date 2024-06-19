@@ -84,6 +84,27 @@
         {% endif %}
         <input type="file" name="photo4">
     </div>
+    {% if formAction == 'update' %}
+        <div class="row">
+            <label for="parent_id">Move to:</label>
+            <select name="parent_id" id="parent_id">
+            <option value="{{ section}}" selected>{{ secionName }}</option>
+                {% macro render_options(items, level = 0, selected_id = null) %}
+                    {% for item in items %}
+                        <option value="{{ item.id }}" {% if selected_id == item.id %}selected{% endif %}>
+                            {{ item.title }}
+                        </option>
+                        {% if item.children is defined %}
+                            {{ _self.render_options(item.children, level + 1, selected_id) }}
+                        {% endif %}
+                    {% endfor %}
+                {% endmacro %}
+                
+                {{ _self.render_options(menu, 0, edit.parent_id) }}
+            </select>
+        </div>
+    {% endif %}
+
     <div class="buttons">
 		<button type="submit" name="submit" class="green-button">Save</button>
         <a href="/admin/body/{{ section }}" class="red-button">Cancel</a>

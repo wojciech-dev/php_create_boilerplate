@@ -20,6 +20,7 @@ class MenuGenerator {
 
     private function generateMenuItem($menuItem) {
         $item = [
+            'id' => $menuItem['id'],
             'title' => $menuItem['title'],
             'url' => $this->generateUrl($menuItem),
             'children' => []
