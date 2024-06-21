@@ -44,7 +44,7 @@ class BodyController
     //wyświetla wszystkie rekordy z danego menu w jednej tabeli
     public function home($id)
     {
-        $items = $this->db->find('body', ['parent_id' => $id['id']], null);
+        $items = $this->db->find('body', ['parent_id' => $id['id']], null, false, 'sorting ASC');
 
         echo TwigConfig::getTwig()->render('admin/body.twig', [
             'items' => $items,
@@ -101,6 +101,7 @@ class BodyController
         ]);
     }
     
+    //usuwanie rekordu
     public function destroy($id)
     {
         $record = $this->db->find('body', ['id' => $id['id']], null, true);
@@ -112,5 +113,41 @@ class BodyController
             exit;
         }
     }
+
+    //przesywanie, sortowanie rekordów w panelu
+    public function moveItem($param)
+    {
+        $currentItem = $this->db->find('body', ['id' => $param['id']], ['id', 'sorting'], true);
+        if (!$currentItem) {
+            echo json_encode(['success' => false]);
+            return;
+        }
+    
+        if ($param['direction'] === 'up') {
+            $adjacentItem = $this->db->getItemsBySortingDirection('body', $currentItem['sorting'], 'above');
+        } elseif ($param['direction'] === 'down') {
+            $adjacentItem = $this->db->getItemsBySortingDirection('body', $currentItem['sorting'], 'below');
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid direction']);
+            return;
+        }
+    
+        if ($adjacentItem) {
+            $this->swapSorting($currentItem, $adjacentItem);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false]);
+        }
+    }
+
+
+    //funkcja pomocnicz aktualizujące przesuwane pozycje
+    private function swapSorting($item1, $item2)
+    {
+        $this->db->update('body', ['sorting' => $item2['sorting']], ['id' => $item1['id']]);
+        $this->db->update('body', ['sorting' => $item1['sorting']], ['id' => $item2['id']]);
+    }
+
+ 
 
 }

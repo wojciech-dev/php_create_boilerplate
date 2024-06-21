@@ -12,6 +12,7 @@
         <tr>
             <th>Id</th>
             <th>Parent Id</th>
+            <th>Sorting</th>
             <th>Name</th>
             <th>Title</th>
             <th>Description</th>
@@ -32,6 +33,7 @@
                 <tr>
                     <td>{{ item.id }}</td>
                     <td>{{ item.parent_id }}</td>
+                    <td>{{ item.sorting }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.title }}</td>
                     <td>{% set description = item.description|striptags %}{% if description|length > 100 %}{{ description|slice(0, 100) ~ '...' }}{% else %}{{ description }}{% endif %}</td>

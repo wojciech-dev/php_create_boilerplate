@@ -27,7 +27,10 @@ $router->with('/admin', function ($router, $prefix) {
     
     $router->respondWithController(['POST', $prefix.'/login', 'MenuController@login']);
     $router->respondWithController(['GET', $prefix.'/logout', 'MenuController@logout']);
-    
+
+    $router->respondWithControllerMultiple('POST', '/admin/body/{direction}/{id}', 'BodyController@moveItem', 0);
+
+
 });
 
 

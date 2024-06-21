@@ -5,6 +5,7 @@ namespace App\Models;
 use PDO;
 use PDOException;
 use Exception;
+use App\Helpers\Functions;
 
 class Database
 {
@@ -28,39 +29,6 @@ class Database
     public function getConnection()
     {
         return $this->conn;
-    }
-    
-    //ogolne pobieranie rekordów z warunkami
-    public function find($table, $conditions = [], $fields = null, $singleRecord = false)
-    {
-        if (is_null($fields)) {
-            $fieldsStr = '*';
-        } else {
-            $fieldsStr = implode(", ", $fields);
-        }
-
-        $sql = "SELECT $fieldsStr FROM $table";
-        
-        if (!empty($conditions)) {
-            $sql .= " WHERE ";
-            $sql .= implode(" AND ", array_map(function($key) {
-                return "$key = :$key";
-            }, array_keys($conditions)));
-        }
-
-        try {
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute($conditions);
-            
-            if ($singleRecord) {
-                return $stmt->fetch(PDO::FETCH_ASSOC);
-            } else {
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
-        } catch (PDOException $e) {
-            echo 'Error: ' . $e->getMessage();
-            return false;
-        }
     }
 
     //zapisywanie rekordu
@@ -161,6 +129,90 @@ class Database
         $stmt->execute();
     }
 
+    //ogolna funkcja do pobierania rekordów, z warunkami lun bez
+    public function find($table, $conditions = [], $fields = ['*'], $single = false, $orderBy = null)
+    {
+        if (!is_array($fields)) {
+            $fields = ['*'];
+        }
+    
+        $fieldsStr = implode(", ", $fields);
+        $sql = "SELECT $fieldsStr FROM $table";
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE ";
+            $sql .= implode(" AND ", array_map(function($key) {
+                if (strpos($key, ' ') !== false) {
+                    return "$key :$key";
+                }
+                return "$key = :$key";
+            }, array_keys($conditions)));
+        }
+
+        if ($orderBy) {
+            $sql .= " ORDER BY $orderBy";
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        foreach ($conditions as $key => $value) {
+            if (strpos($key, ' ') !== false) {
+                $stmt->bindValue(":$key", $value, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue(":$key", $value);
+            }
+        }
+        $stmt->execute();
+
+        if ($single) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    //update posortowanych rekordów(drag&drop) tabeli, coś innego niż 'edit'
+    public function update($table, $data, $conditions) {
+        $dataStr = implode(", ", array_map(function($key) {
+            return "$key = :$key";
+        }, array_keys($data)));
+
+        $conditionStr = implode(" AND ", array_map(function($key) {
+            return "$key = :cond_$key";
+        }, array_keys($conditions)));
+
+        $sql = "UPDATE $table SET $dataStr WHERE $conditionStr";
+
+        $stmt = $this->conn->prepare($sql);
+        foreach ($data as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+        foreach ($conditions as $key => $value) {
+            $stmt->bindValue(":cond_$key", $value);
+        }
+
+        return $stmt->execute();
+    }
+
+    //do pobierania rekordów poprzedzajacych i następnych względem przesuwanego. Dotyczy sortowania.
+    public function getItemsBySortingDirection($table, $sorting, $direction) {
+        if ($direction === 'above') {
+            $operator = '<';
+            $order = 'DESC';
+        } elseif ($direction === 'below') {
+            $operator = '>';
+            $order = 'ASC';
+        } else {
+            throw new Exception('Invalid direction. Must be "above" or "below".');
+        }
+    
+        $sql = "SELECT id, sorting FROM $table WHERE sorting $operator :sorting ORDER BY sorting $order LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':sorting', $sorting, PDO::PARAM_INT);
+        $stmt->execute();
+    
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
 }
 
 

@@ -26,3 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+/**sorting */
+document.querySelectorAll('.up, .down').forEach(function(button) {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        let id = this.getAttribute('data-id');
+        let direction = this.classList.contains('up') ? 'up' : 'down';
+        fetch(`/admin/body/${direction}/${id}`, {
+            method: 'POST'
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to move item');
+            }
+        });
+    });
+});

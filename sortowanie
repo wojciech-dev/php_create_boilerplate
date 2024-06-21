@@ -1,0 +1,36 @@
+document.querySelectorAll('.up').forEach(function(button) {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        let id = this.getAttribute('data-id');
+        fetch(`/admin/body/move-up/${id}`, {
+            method: 'POST'
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to move up');
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.down').forEach(function(button) {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        let id = this.getAttribute('data-id');
+        fetch(`/admin/body/move-down/${id}`, {
+            method: 'POST'
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to move down');
+            }
+        });
+    });
+});
+
+$router->respondWithController(['POST', $prefix.'/body/move-up/{id}', 'BodyController@moveUp']);
+$router->respondWithController(['POST', $prefix.'/body/move-down/{id}', 'BodyController@moveDown']);
