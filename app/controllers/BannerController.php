@@ -8,7 +8,7 @@ use App\Helpers\Functions;
 use App\Helpers\MenuGenerator;
 
 
-class BodyController 
+class BannerController 
 {
     private $db;
     private $data;
@@ -43,32 +43,34 @@ class BodyController
     //po wejsciu w 'body', wyświetla wszystkie rekordy z danego menu w jednej tabeli
     public function home($id)
     {
-        $items = $this->db->find('body', ['parent_id' => $id['id']], null, false, 'sorting ASC');
+        $items = $this->db->find('banner', ['parent_id' => $id['id']], null, false, 'sorting ASC');
 
-        echo TwigConfig::getTwig()->render('admin/body/body.twig', [
+        echo TwigConfig::getTwig()->render('admin/banner/banner.twig', [
             'items' => $items,
             'section' => $id['id'],
             'menu' => $this->menu,
             'sectionName' => $this->getSectionTitle($id['id'])
         ]);
     }
-    
+
+
     //zapisywanie nowego rekordu
     public function create($id)
     {
         if (isset($_POST['submit'])) {
-            $postItems = $this->data->getPostDataBody();
-            
+            $postItems = $this->data->getPostDataBanner();
+            //Functions::debug($postItems);
             if (isset($postItems['errors'])) {
                 $errorMessages = $postItems['errors'];
             } else {
-                $this->db->save('body', $postItems);
-                header('Location: /admin/body/'.$id['id'].'');
+
+                $this->db->save('banner', $postItems);
+                header('Location: /admin/banner/'.$id['id'].'');
                 exit;
             }
         }
 
-        echo TwigConfig::getTwig()->render('admin/body/bodyForm.twig', [
+        echo TwigConfig::getTwig()->render('admin/banner/bannerForm.twig', [
             'section' => $id['id'],
             'error' => $errorMessages ?? [],
             'menu' => $this->menu,
@@ -80,20 +82,20 @@ class BodyController
     public function update($id)
     {
         $errorMessages = [];
-        $currentData = $this->db->find('body', ['id' => $id['id']], null, true);
+        $currentData = $this->db->find('banner', ['id' => $id['id']], null, true);
     
         if (isset($_POST['submit'])) {
-            $postItems = $this->data->getPostDataBody($currentData);
+            $postItems = $this->data->getPostDataBanner($currentData);
             if (isset($postItems['errors']) && $postItems['errors']) {
                 $errorMessages = $postItems['errors'];
             } else {
-                $this->db->edit('body', $postItems, $id['id']);
-                header('Location: /admin/body/' . $currentData['parent_id']);
+                $this->db->edit('banner', $postItems, $id['id']);
+                header('Location: /admin/banner/' . $currentData['parent_id']);
                 exit;
             }
         }
     
-        echo TwigConfig::getTwig()->render('admin/body/bodyForm.twig', [
+        echo TwigConfig::getTwig()->render('admin/banner/bannerForm.twig', [
             'section' => $id['id'],
             'edit' => $currentData,
             'formAction' => 'update',
@@ -101,33 +103,33 @@ class BodyController
             'menu' => $this->menu
         ]);
     }
+
+        //usuwanie rekordu
+        public function destroy($id)
+        {
+            $record = $this->db->find('banner', ['id' => $id['id']], null, true);
     
-    //usuwanie rekordu
-    public function destroy($id)
-    {
-        $record = $this->db->find('body', ['id' => $id['id']], null, true);
-
-        if ($record) {
-            $this->photos->deletePhotos($record);
-            $this->db->delete('body', ['id' => $id['id']]);
-            header('Location: /admin/body/' . $record ['parent_id']);
-            exit;
+            if ($record) {
+                $this->photos->deletePhotos($record);
+                $this->db->delete('banner', ['id' => $id['id']]);
+                header('Location: /admin/banner/' . $record ['parent_id']);
+                exit;
+            }
         }
-    }
 
-    //przesywanie, sortowanie rekordów w panelu
+            //przesywanie, sortowanie rekordów w panelu
     public function moveItem($param)
     {
-        $currentItem = $this->db->find('body', ['id' => $param['id']], ['id', 'sorting'], true);
+        $currentItem = $this->db->find('banner', ['id' => $param['id']], ['id', 'sorting'], true);
         if (!$currentItem) {
             echo json_encode(['success' => false]);
             return;
         }
     
         if ($param['direction'] === 'up') {
-            $adjacentItem = $this->db->getItemsBySortingDirection('body', $currentItem['sorting'], 'above');
+            $adjacentItem = $this->db->getItemsBySortingDirection('banner', $currentItem['sorting'], 'above');
         } elseif ($param['direction'] === 'down') {
-            $adjacentItem = $this->db->getItemsBySortingDirection('body', $currentItem['sorting'], 'below');
+            $adjacentItem = $this->db->getItemsBySortingDirection('banner', $currentItem['sorting'], 'below');
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid direction']);
             return;
@@ -145,10 +147,8 @@ class BodyController
     //funkcja pomocnicz aktualizujące przesuwane pozycje
     private function swapSorting($item1, $item2)
     {
-        $this->db->update('body', ['sorting' => $item2['sorting']], ['id' => $item1['id']]);
-        $this->db->update('body', ['sorting' => $item1['sorting']], ['id' => $item2['id']]);
+        $this->db->update('banner', ['sorting' => $item2['sorting']], ['id' => $item1['id']]);
+        $this->db->update('banner', ['sorting' => $item1['sorting']], ['id' => $item2['id']]);
     }
-
- 
 
 }

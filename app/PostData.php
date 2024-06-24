@@ -31,7 +31,6 @@ class PostData {
     {
         $errors = [];
     
-        // Walidacja wymaganych pól
         if (empty($_POST['name'])) {
             $errors[] = 'Nazwa jest wymagana';
         }
@@ -39,12 +38,10 @@ class PostData {
             $errors[] = 'Tytuł jest wymagany';
         }
     
-        // Sprawdzanie, czy są błędy
         if ($errors) {
             return ['errors' => $errors];
         }
     
-        // Pobieranie danych formularza
         $data = [
             'parent_id' => $_POST['parent_id'],
             'name' => $_POST['name'],
@@ -67,7 +64,40 @@ class PostData {
     }
     
 
-
+    public function getPostDataBanner($existingData = [])
+    {
+        $errors = [];
+    
+        if (empty($_POST['name'])) {
+            $errors[] = 'Nazwa jest wymagana';
+        }
+    
+        if (empty($_POST['title'])) {
+            $errors[] = 'Tytuł jest wymagany';
+        }
+    
+        if ($errors) {
+            return ['errors' => $errors];
+        }
+    
+        $data = [
+            'parent_id' => $_POST['parent_id'],
+            'name' => $_POST['name'],
+            'title' => $_POST['title'],
+            'description' => $_POST['description'] ?? '',
+            'status' => isset($_POST['status']) ? 1 : 0,
+            'layout' => isset($_POST['layout']) ? 1 : 0,
+            'photo1' => Photos::uploadPhoto('photo1', $errors, $existingData['photo1'] ?? null) ?? $existingData['photo1'] ?? null,
+            'more_link' => $_POST['more_link'] ?? '',
+        ];
+    
+        if (!empty($errors)) {
+            return ['errors' => $errors];
+        }
+    
+        return $data;
+    }
+    
     
     
     

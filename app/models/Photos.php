@@ -58,7 +58,7 @@ class Photos {
         return null;
     }
     
-    //usuwanie zdjęc z serwera - dotyczy usuwania rekordu z tabli body
+    //usuwanie zdjęc z serwera - dotyczy usuwania rekordu z tabeli body
     public function deletePhotos($record)
     {
         $photos = ['photo1', 'photo2', 'photo3', 'photo4'];
@@ -110,7 +110,7 @@ class Photos {
         }
     }
 
-    /*usuwanie rekordów z tabli body powiazanych relacją
+    /*usuwanie rekordów z tabeli body powiazanych relacją
     rekurencja do funkcji deleteMenuAndRelatedBodies()
     */
     private function deleteBodies($menuId)

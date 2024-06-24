@@ -2,9 +2,11 @@
 
 use App\TwigConfig;
 
+
 class Router
 {
     private $routes = [];
+    private $originalParamNames = [];
 
     public function with($prefix, $callback)
     {
@@ -64,10 +66,12 @@ class Router
                         $params = [];
                         foreach ($matches as $key => $value) {
                             if (!is_numeric($key)) {
-                                $params[$key] = $value;
+                                // Mapowanie unikalnych nazw parametrów na oryginalne nazwy
+                                $originalKey = $this->getOriginalParamName($key);
+                                $params[$originalKey] = $value;
                             }
                         }
-                      
+
                         $controllerInstance->$controllerMethod($params);
                         return;
                     } else {
@@ -91,11 +95,19 @@ class Router
 
     private function compileRouteRegex($route)
     {
-        $regex = preg_replace_callback('#\{(\w+)\}#', function ($matches) {
-            return "(?P<{$matches[1]}>[\w-]+)";
+        // Generowanie unikalnych nazw parametrów
+        static $paramCount = 0;
+        $regex = preg_replace_callback('#\{(\w+)\}#', function ($matches) use (&$paramCount) {
+            $paramName = $matches[1] . $paramCount++;
+            $this->originalParamNames[$paramName] = $matches[1]; // Zapisywanie oryginalnej nazwy parametru
+            return "(?P<{$paramName}>[\w-]+)";
         }, $route);
         $regex = "#^" . $regex . "$#";
         return $regex;
     }
-}
 
+    private function getOriginalParamName($paramName)
+    {
+        return $this->originalParamNames[$paramName] ?? $paramName;
+    }
+}

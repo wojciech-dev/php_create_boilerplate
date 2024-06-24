@@ -12,6 +12,7 @@
         <div class="menu_title">{{ item.title }}</div>
         <div class="menu_counter" data-records="{{ counts[item.id] | default(0) }}"> {{ counts[item.id] | default(0) }} records</div>
         <div class="action_buttons">
+            <a href="/admin/banner/{{ item.id }}">Banner</a>
             <a href="/admin/body/{{ item.id }}">Body</a>
             <a href="/admin/menu/update/{{ item.id }}">Edit</a>
             <button class="delete-menu-button"  data-id="{{ item.id }}">Delete</button>

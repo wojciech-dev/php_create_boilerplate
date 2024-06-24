@@ -7,11 +7,11 @@
 {% block content %}
 <div class="form">
 	{% if formAction == 'update' %}
-		<h6>Edit record - <span>{{ secionName }}</span></h6>
+		<h6>Edit record - <span>{{ sectionName }}</span></h6>
 		<form action="/admin/body/update/{{ edit.id }}" method="post" enctype="multipart/form-data">
         <input type="hidden" id="parent_id" name="parent_id" value="{{ edit.parent_id }}">
 	{% else %}
-        <h6>Add record - <span>{{ secionName }}</span></h6>
+        <h6>Add record - <span>{{ sectionName }}</span></h6>
         <form action="/admin/body/create/{{ section }}" method="post" enctype="multipart/form-data">
         <input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
 	{% endif %}
@@ -88,7 +88,7 @@
         <div class="row">
             <label for="parent_id">Move to:</label>
             <select name="parent_id" id="parent_id">
-            <option value="{{ section}}" selected>{{ secionName }}</option>
+            <option value="{{ section}}" selected>{{ sectionName }}</option>
                 {% macro render_options(items, level = 0, selected_id = null) %}
                     {% for item in items %}
                         <option value="{{ item.id }}" {% if selected_id == item.id %}selected{% endif %}>

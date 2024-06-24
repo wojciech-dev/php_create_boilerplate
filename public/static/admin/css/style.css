@@ -200,6 +200,11 @@ header .user-info a:hover {
 }
 
 .right_column h6 span {
+    color: #007bff;
+    font-weight: normal;
+}
+
+.right_column h6 span {
     font-weight: normal;
     color: #007bff;
 }
@@ -457,7 +462,8 @@ table tbody td a:hover {
     color: #fff;
 }
 
-.delete-body-button {
+.delete-body-button,
+.delete-banner-button {
     background-color: #dc3545;
     color: #fff;
     border: none;
@@ -468,7 +474,8 @@ table tbody td a:hover {
     display: inline-block;
 }
 
-.delete-body-button:hover {
+.delete-body-button:hover,
+.delete-banner-button:hover {
     background-color: #c82333;
 }
 
@@ -502,3 +509,8 @@ table tbody td .action-buttons {
     margin-left: 20px;
 }
 
+.highlight {
+    background-color: #007bff !important;
+    color: white;
+    transition: background-color 0.5s ease, color 0.5s ease, transform 0.5s ease;
+}

@@ -49,7 +49,7 @@ class MenuController
             $counts[$item['id']] = $this->db->countBodyRecordsLinkedToMenu($item['id']);
         }
     
-        echo TwigConfig::getTwig()->render('admin/menu.twig', [
+        echo TwigConfig::getTwig()->render('admin/menu/menu.twig', [
             'data' => $menuItems,
             'counts' => $counts,
             'menu' => $this->menu
@@ -69,7 +69,7 @@ class MenuController
         }
 
         $menuItems = $this->db->find('menu', [],['id', 'parent_id', 'title']);
-        echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
+        echo TwigConfig::getTwig()->render('admin/menu/menuForm.twig', [
             'data' => $menuItems, 
             'error' => $errorMessages ?? [],
             'menu' => $this->menu
@@ -91,7 +91,7 @@ class MenuController
 
         $menuById = $this->db->find('menu', ['id' => $id['id']], null, true);
         $menuItems = $this->db->find('menu', [],['id', 'parent_id', 'title']);
-        echo TwigConfig::getTwig()->render('admin/menuForm.twig', [
+        echo TwigConfig::getTwig()->render('admin/menu/menuForm.twig', [
             'data' => $menuItems, 
             'edit' => $menuById, 
             'formAction' => 'update',

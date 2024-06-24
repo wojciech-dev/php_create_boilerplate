@@ -1,0 +1,103 @@
+{% extends "admin/base.twig" %}
+
+{% block title %}Create banner -
+	{{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="form">
+        {% if formAction == 'update' %}
+            <h6>Banners: Edit record - <span>{{ sectionName }}</span></h6>
+            <form action="/admin/banner/update/{{ edit.id }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="parent_id" name="parent_id" value="{{ edit.parent_id }}">
+        {% else %}
+            <h6>Banners: Add record - <span>{{ sectionName }}</span></h6>
+            <form action="/admin/banner/create/{{ section }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
+        {% endif %}
+        
+        {% if error %}
+            <div class="error">
+                {% for message in error %}
+                    <p class="error_message">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <div class="row">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="{{ edit.name }}">
+        </div>
+        
+        <div class="row">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="{{ edit.title }}">
+        </div>
+
+        <div class="row">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description">{{ edit.description }}</textarea>
+        </div>
+        
+        <div class="row">
+            <label for="status">Status:</label>
+            <input type="checkbox" id="status" name="status" {% if edit.status == 1 %}checked{% endif %}>
+        </div>
+        
+        <div class="row">
+            <label for="layout">Layout:</label>
+            <input type="checkbox" id="layout" name="layout" {% if edit.layout == 1 %}checked{% endif %}>
+        </div>
+
+        <div class="row">
+            <label for="photo1">Photo 1:</label>
+            {% if edit.photo1 %}
+                <div>
+                    <img src="/uploads/{{ edit.photo1 }}" alt="Photo 1" style="width: 100px; height: auto;">
+                </div>
+            {% endif %}
+            <input type="file" name="photo1">
+        </div>
+
+        <div class="row">
+            <label for="more_link">More:</label>
+            <input type="text" id="more_link" name="more_link" value="{{ edit.more_link }}">
+        </div>
+
+
+        {% if formAction == 'update' %}
+            <div class="row">
+                <label for="parent_id">Move to:</label>
+                <select name="parent_id" id="parent_id">
+                    <option value="{{ section }}" selected>{{ sectionName }}</option>
+                    {% macro render_options(items, level = 0, selected_id = null) %}
+                        {% for item in items %}
+                            <option value="{{ item.id }}" {% if selected_id == item.id %}selected{% endif %}>
+                                {{ item.title }}
+                            </option>
+                            {% if item.children is defined %}
+                                {{ _self.render_options(item.children, level + 1, selected_id) }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endmacro %}
+                    {{ _self.render_options(menu, 0, edit.parent_id) }}
+                </select>
+            </div>
+        {% endif %}
+        
+        <div class="buttons">
+            <button type="submit" name="submit" class="green-button">Save</button>
+            <a href="/admin/banner/{{ section }}" class="red-button">Cancel</a>
+        </div>
+        
+        </form>
+    </div>
+
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+    <script>
+    CKEDITOR.replace('description', {
+        height: 400,
+        width: '100%'
+    });
+    </script>
+	{% endblock %}
