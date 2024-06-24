@@ -56,25 +56,31 @@ class BodyController
     //zapisywanie nowego rekordu
     public function create($id)
     {
+        $errorMessages = [];
+        $editData = [];
+    
         if (isset($_POST['submit'])) {
             $postItems = $this->data->getPostDataBody();
-            
-            if (isset($postItems['errors'])) {
+    
+            if (!empty($postItems['errors'])) {
                 $errorMessages = $postItems['errors'];
+                $editData = $postItems['data'];
             } else {
-                $this->db->save('body', $postItems);
-                header('Location: /admin/body/'.$id['id'].'');
+                $this->db->save('body', $postItems['data']);
+                header('Location: /admin/body/'.$id['id']);
                 exit;
             }
         }
-
+    
         echo TwigConfig::getTwig()->render('admin/body/bodyForm.twig', [
             'section' => $id['id'],
-            'error' => $errorMessages ?? [],
+            'error' => $errorMessages,
+            'edit' => $editData, //zapamietaj dane w polach po validaciji
             'menu' => $this->menu,
             'sectionName' => $this->getSectionTitle($id['id'])
         ]);
     }
+    
 
     //edycja rekordu
     public function update($id)
@@ -87,7 +93,7 @@ class BodyController
             if (isset($postItems['errors']) && $postItems['errors']) {
                 $errorMessages = $postItems['errors'];
             } else {
-                $this->db->edit('body', $postItems, $id['id']);
+                $this->db->edit('body', $postItems['data'], $id['id']);
                 header('Location: /admin/body/' . $currentData['parent_id']);
                 exit;
             }

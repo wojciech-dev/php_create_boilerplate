@@ -57,26 +57,30 @@ class BannerController
     //zapisywanie nowego rekordu
     public function create($id)
     {
+        $errorMessages = [];
+        $editData = [];
+    
         if (isset($_POST['submit'])) {
             $postItems = $this->data->getPostDataBanner();
-            //Functions::debug($postItems);
-            if (isset($postItems['errors'])) {
+            if (!empty($postItems['errors'])) {
                 $errorMessages = $postItems['errors'];
+                $editData = $postItems['data'];
             } else {
-
-                $this->db->save('banner', $postItems);
-                header('Location: /admin/banner/'.$id['id'].'');
+                $this->db->save('banner', $postItems['data']);
+                header('Location: /admin/banner/'.$id['id']);
                 exit;
             }
         }
-
+    
         echo TwigConfig::getTwig()->render('admin/banner/bannerForm.twig', [
             'section' => $id['id'],
-            'error' => $errorMessages ?? [],
+            'error' => $errorMessages,
+            'edit' => $editData, //zapamietaj dane w polach po validaciji
             'menu' => $this->menu,
             'sectionName' => $this->getSectionTitle($id['id'])
         ]);
     }
+    
 
     //edycja rekordu
     public function update($id)
@@ -89,7 +93,8 @@ class BannerController
             if (isset($postItems['errors']) && $postItems['errors']) {
                 $errorMessages = $postItems['errors'];
             } else {
-                $this->db->edit('banner', $postItems, $id['id']);
+                //Functions::debug($postItems);
+                $this->db->edit('banner', $postItems['data'], $id['id']);
                 header('Location: /admin/banner/' . $currentData['parent_id']);
                 exit;
             }
@@ -100,7 +105,7 @@ class BannerController
             'edit' => $currentData,
             'formAction' => 'update',
             'error' => $errorMessages,
-            'menu' => $this->menu
+            'menu' => $this->menu,
         ]);
     }
 

@@ -43,15 +43,15 @@ class MenuController
     public function home()
     {
         $menuItems = $this->db->find('menu');
-        $counts = [];
-    
         foreach ($menuItems as $item) {
-            $counts[$item['id']] = $this->db->countBodyRecordsLinkedToMenu($item['id']);
+            $countsBody[$item['id']] = $this->db->countRecordsLinkedToMenu($item['id'], 'body');
+            $countsBanner[$item['id']] = $this->db->countRecordsLinkedToMenu($item['id'], 'banner');
         }
     
         echo TwigConfig::getTwig()->render('admin/menu/menu.twig', [
             'data' => $menuItems,
-            'counts' => $counts,
+            'countsBody' => $countsBody,
+            'countsBanner' => $countsBanner,
             'menu' => $this->menu
         ]);
     }

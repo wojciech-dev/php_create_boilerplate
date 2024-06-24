@@ -7,6 +7,13 @@ use App\Models\Photos;
 
 class PostData {
 
+    private $db;
+
+    public function __construct()
+    {
+        $this->db = new Database();
+    }
+
     public static function gePostDataMenu()
     {
         $errors = [];
@@ -38,12 +45,9 @@ class PostData {
             $errors[] = 'Tytuł jest wymagany';
         }
     
-        if ($errors) {
-            return ['errors' => $errors];
-        }
-    
         $data = [
             'parent_id' => $_POST['parent_id'],
+            'sorting' => $this->db->getNextSortingValue('body'),
             'name' => $_POST['name'],
             'title' => $_POST['title'],
             'description' => $_POST['description'] ?? '',
@@ -56,11 +60,7 @@ class PostData {
             'photo4' => Photos::uploadPhoto('photo4', $errors, $existingData['photo4'] ?? null) ?? $existingData['photo4'] ?? null,
         ];
     
-        if (!empty($errors)) {
-            return ['errors' => $errors];
-        }
-    
-        return $data;
+        return ['data' => $data, 'errors' => $errors];
     }
     
 
@@ -76,14 +76,11 @@ class PostData {
             $errors[] = 'Tytuł jest wymagany';
         }
     
-        if ($errors) {
-            return ['errors' => $errors];
-        }
-    
         $data = [
             'parent_id' => $_POST['parent_id'],
-            'name' => $_POST['name'],
-            'title' => $_POST['title'],
+            'sorting' => $this->db->getNextSortingValue('banner'),
+            'name' => $_POST['name'] ?? '',
+            'title' => $_POST['title'] ?? '',
             'description' => $_POST['description'] ?? '',
             'status' => isset($_POST['status']) ? 1 : 0,
             'layout' => isset($_POST['layout']) ? 1 : 0,
@@ -91,12 +88,9 @@ class PostData {
             'more_link' => $_POST['more_link'] ?? '',
         ];
     
-        if (!empty($errors)) {
-            return ['errors' => $errors];
-        }
-    
-        return $data;
+        return ['data' => $data, 'errors' => $errors];
     }
+    
     
     
     

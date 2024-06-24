@@ -12,7 +12,7 @@
             <input type="hidden" id="parent_id" name="parent_id" value="{{ edit.parent_id }}">
         {% else %}
             <h6>Banners: Add record - <span>{{ sectionName }}</span></h6>
-            <form action="/admin/banner/create/{{ section }}" method="post" enctype="multipart/form-data">
+            <form action="/admin/banner/create/{{ section }}" id="banner_form" method="post" enctype="multipart/form-data">
             <input type="hidden" id="parent_id" name="parent_id" value="{{ section }}">
         {% endif %}
         
@@ -26,17 +26,17 @@
         
         <div class="row">
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name" value="{{ edit.name }}">
+            <input type="text" id="name" name="name" value="{{ edit.name ?? '' }}">
         </div>
         
         <div class="row">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="{{ edit.title }}">
+            <input type="text" id="title" name="title" value="{{ edit.title ?? '' }}">
         </div>
 
         <div class="row">
             <label for="description">Description:</label>
-            <textarea id="description" name="description">{{ edit.description }}</textarea>
+            <textarea id="description" name="description">{{ edit.description ?? '' }}</textarea>
         </div>
         
         <div class="row">

@@ -110,10 +110,10 @@ class Database
         $stmt->execute($params);
     }
 
-    //oblicza liczbę wierszy i zwraca liczbę
-    public function countBodyRecordsLinkedToMenu($menuId)
+    //oblicza liczbę wierszy i zwraca liczbę. Do okreslania ile jest rekordów w danej kategotii
+    public function countRecordsLinkedToMenu($menuId, $table)
     {
-        $sql = "SELECT COUNT(*) as count FROM body WHERE parent_id = :parent_id";
+        $sql = "SELECT COUNT(*) as count FROM $table WHERE parent_id = :parent_id";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['parent_id' => $menuId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -211,6 +211,15 @@ class Database
         $stmt->execute();
     
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    //odpowienik autoincrement dla wiersza 'sorting'. Do sortowania.
+    public function getNextSortingValue($table) {
+        $sql = "SELECT MAX(sorting) AS max_sorting FROM $table";
+        $stmt = $this->conn->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return ($result['max_sorting'] !== null) ? $result['max_sorting'] + 1 : 1;
     }
     
 }

@@ -224,25 +224,46 @@ header .user-info a:hover {
 
 .right_column .menu_list ul li a {
     text-decoration: none;
-    color: #333;
     margin-right: 10px;
+    color: #333;
 }
 
 .right_column .menu_list ul li a:hover {
     text-decoration: underline;
 }
 
-.right_column .menu_list .delete-menu-button {
+.right_column .menu_list .delete-menu-button,
+.edit-button {
     padding: 5px 10px;
     border: none;
     border-radius: 3px;
     background-color: #e74c3c;
     color: #fff;
     cursor: pointer;
+    font-size: 13px;
 }
 
 .right_column .menu_list .delete-menu-button:hover {
     background-color: #c0392b;
+}
+
+.right_column .menu_list .nested .delete-menu-button {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.right_column .menu_list .nested .delete-menu-button:hover {
+    background-color: #c0392b;
+}
+
+.edit-button {
+    color: #fff !important;
+    background-color: #007bff;
+}
+
+.edit-button:hover{
+    text-decoration: none !important;
+    background-color: #2f87e4;
 }
 
 .right_column .menu_list .nested {
@@ -260,7 +281,6 @@ header .user-info a:hover {
 }
 
 .right_column .menu_list .nested li a {
-    color: #333;
     text-decoration: none;
     margin-right: 10px;
 }
@@ -269,28 +289,13 @@ header .user-info a:hover {
     text-decoration: underline;
 }
 
-.right_column .menu_list .nested .delete-menu-button {
-    background-color: #e74c3c;
-    color: #fff;
-}
-
-.right_column .menu_list .nested .delete-menu-button:hover {
-    background-color: #c0392b;
-}
-
 .right_column .menu_list .action_buttons {
     margin-left: auto;
 }
 
-.right_column .menu_list .menu_counter {
-    font-weight: bold;
-    font-size: 12px;
-    margin-left: 10px;
-    color: #008000;
-}
-
-.right_column .menu_list .menu_counter[data-records="0"] {
-    color: #ff0000;
+.right_column .menu_list .action_buttons span {
+    font-weight: 300;
+    color: #28a745;
 }
 
 /*buttony*/
