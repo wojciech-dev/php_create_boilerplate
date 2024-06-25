@@ -26,9 +26,46 @@ class Database
         }
     }
 
+    // Funkcja do obsługi błędów PDO
+    private function handlePDOException(PDOException $e) {
+        error_log('PDOException: ' . $e->getMessage());
+        return false;
+    }
+
+    /**metody do tworzenia nowej nbazy danych */
+
+    public function createDatabase()
+    {
+        try {
+            $sql = "CREATE DATABASE IF NOT EXISTS `{$this->dbname}` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci";
+            $this->conn->exec($sql);
+        } catch (PDOException $e) {
+            echo 'Error creating database: ' . $e->getMessage();
+        }
+    }
+
+    public function useDatabase()
+    {
+        try {
+            $this->conn->exec("USE `{$this->dbname}`");
+        } catch (PDOException $e) {
+            echo 'Error selecting database: ' . $e->getMessage();
+        }
+    }
+
     public function getConnection()
     {
         return $this->conn;
+    }
+
+    public function exec($sql)
+    {
+        return $this->conn->exec($sql);
+    }
+
+    public function prepare($sql)
+    {
+        return $this->conn->prepare($sql);
     }
 
     //zapisywanie rekordu
@@ -129,44 +166,48 @@ class Database
         $stmt->execute();
     }
 
-    //ogolna funkcja do pobierania rekordów, z warunkami lun bez
     public function find($table, $conditions = [], $fields = ['*'], $single = false, $orderBy = null)
     {
-        if (!is_array($fields)) {
-            $fields = ['*'];
-        }
-    
-        $fieldsStr = implode(", ", $fields);
-        $sql = "SELECT $fieldsStr FROM $table";
-
-        if (!empty($conditions)) {
-            $sql .= " WHERE ";
-            $sql .= implode(" AND ", array_map(function($key) {
-                if (strpos($key, ' ') !== false) {
-                    return "$key :$key";
-                }
-                return "$key = :$key";
-            }, array_keys($conditions)));
-        }
-
-        if ($orderBy) {
-            $sql .= " ORDER BY $orderBy";
-        }
-
-        $stmt = $this->conn->prepare($sql);
-        foreach ($conditions as $key => $value) {
-            if (strpos($key, ' ') !== false) {
-                $stmt->bindValue(":$key", $value, PDO::PARAM_INT);
-            } else {
-                $stmt->bindValue(":$key", $value);
+        try {
+            if (!is_array($fields)) {
+                $fields = ['*'];
             }
-        }
-        $stmt->execute();
-
-        if ($single) {
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } else {
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            $fieldsStr = implode(", ", $fields);
+            $sql = "SELECT $fieldsStr FROM $table";
+    
+            if (!empty($conditions)) {
+                $sql .= " WHERE ";
+                $sql .= implode(" AND ", array_map(function($key) {
+                    if (strpos($key, ' ') !== false) {
+                        return "$key :$key";
+                    }
+                    return "$key = :$key";
+                }, array_keys($conditions)));
+            }
+    
+            if ($orderBy) {
+                $sql .= " ORDER BY $orderBy";
+            }
+    
+            $stmt = $this->conn->prepare($sql);
+            foreach ($conditions as $key => $value) {
+                if (strpos($key, ' ') !== false) {
+                    $stmt->bindValue(":$key", $value, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue(":$key", $value);
+                }
+            }
+            $stmt->execute();
+    
+            if ($single) {
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            } else {
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        } catch (PDOException $e) {
+            echo "Error executing query: " . $e->getMessage();
+            return false;
         }
     }
 
@@ -221,6 +262,10 @@ class Database
 
         return ($result['max_sorting'] !== null) ? $result['max_sorting'] + 1 : 1;
     }
+
+
+
+
     
 }
 

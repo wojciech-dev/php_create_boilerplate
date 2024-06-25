@@ -6,36 +6,42 @@
 
 {% block content %}
     <div class="menu_list">
-    <h6>Menu Items</h6>
-    {% macro renderNestedList(item, data, countsBody, countsBanner) %}
-        <li>
-        <div class="menu_title">{{ item.title }}</div>
-        <div class="action_buttons">
-            <a href="/admin/banner/{{ item.id }}">Banner <span>({{ countsBanner[item.id] | default(0) }})</span></a>
-            <a href="/admin/body/{{ item.id }}">Body <span>({{ countsBody[item.id] | default(0) }})</span></a>
-            <a href="/admin/menu/update/{{ item.id }}" class="edit-button">Edit</a>
-            <button class="delete-menu-button"  data-id="{{ item.id }}">Delete</button>
-        </div>
-        </li>
-        {% set children = data|filter(child => child.parent_id == item.id) %}
-        {% if children is not empty %}
+        <h6>Menu Items</h6>
+
+        {% if data is empty %}
+            <p class="no-posts">NO POSTS</p>
+        {% else %}
+            {% macro renderNestedList(item, data, countsBody, countsBanner) %}
+                <li>
+                    <div class="menu_title">{{ item.title }}</div>
+                    <div class="action_buttons">
+                        <a href="/admin/banner/{{ item.id }}">Banner <span>({{ countsBanner[item.id] | default(0) }})</span></a>
+                        <a href="/admin/body/{{ item.id }}">Body <span>({{ countsBody[item.id] | default(0) }})</span></a>
+                        <a href="/admin/menu/update/{{ item.id }}" class="edit-button">Edit</a>
+                        <button class="delete-button delete-menu-button"  data-id="{{ item.id }}" data-type="menu">Delete</button>
+                    </div>
+                </li>
+                {% set children = data|filter(child => child.parent_id == item.id) %}
+                {% if children is not empty %}
+                    <ul class="nested">
+                        {% for child in children %}
+                            {{ _self.renderNestedList(child, data, countsBody, countsBanner) }}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endmacro %}
+
             <ul class="nested">
-                {% for child in children %}
-                    {{ _self.renderNestedList(child, data, countsBody, countsBanner) }}
+                {% for item in data %}
+                    {% if item.parent_id == 0 %}
+                        {{ _self.renderNestedList(item, data, countsBody, countsBanner) }}
+                    {% endif %}
                 {% endfor %}
             </ul>
         {% endif %}
-    {% endmacro %}
-
-    <ul class="nested">
-        {% for item in data %}
-            {% if item.parent_id == 0 %}
-                {{ _self.renderNestedList(item, data, countsBody, countsBanner) }}
-            {% endif %}
-        {% endfor %}
-    </ul>
     </div>
 {% endblock %}
+
 
 
 

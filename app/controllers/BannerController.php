@@ -32,8 +32,8 @@ class BannerController
     }
 
     //nagłówek tak aby uzytkownik wiedział gdzie dodaje rekordy
-    public function getSectionTitle($id) {
-        $secionTitle = $this->db->find('menu', ['id' => $id], ['title'], true);
+    public function getSectionTitle($table, $id) {
+        $secionTitle = $this->db->find($table, ['id' => $id], ['title'], true);
         if ($secionTitle) {
             return $secionTitle['title'];
         }
@@ -44,12 +44,11 @@ class BannerController
     public function home($id)
     {
         $items = $this->db->find('banner', ['parent_id' => $id['id']], null, false, 'sorting ASC');
-
         echo TwigConfig::getTwig()->render('admin/banner/banner.twig', [
             'items' => $items,
             'section' => $id['id'],
             'menu' => $this->menu,
-            'sectionName' => $this->getSectionTitle($id['id'])
+            'sectionName' => $this->getSectionTitle('menu', $id['id'])
         ]);
     }
 
@@ -77,7 +76,7 @@ class BannerController
             'error' => $errorMessages,
             'edit' => $editData, //zapamietaj dane w polach po validaciji
             'menu' => $this->menu,
-            'sectionName' => $this->getSectionTitle($id['id'])
+            'sectionName' => $this->getSectionTitle('menu', $id['id']),
         ]);
     }
     
@@ -93,7 +92,6 @@ class BannerController
             if (isset($postItems['errors']) && $postItems['errors']) {
                 $errorMessages = $postItems['errors'];
             } else {
-                //Functions::debug($postItems);
                 $this->db->edit('banner', $postItems['data'], $id['id']);
                 header('Location: /admin/banner/' . $currentData['parent_id']);
                 exit;
@@ -106,21 +104,22 @@ class BannerController
             'formAction' => 'update',
             'error' => $errorMessages,
             'menu' => $this->menu,
+            'editName' => $this->getSectionTitle('banner', $currentData['id'])
         ]);
     }
 
-        //usuwanie rekordu
-        public function destroy($id)
-        {
-            $record = $this->db->find('banner', ['id' => $id['id']], null, true);
-    
-            if ($record) {
-                $this->photos->deletePhotos($record);
-                $this->db->delete('banner', ['id' => $id['id']]);
-                header('Location: /admin/banner/' . $record ['parent_id']);
-                exit;
-            }
+    //usuwanie rekordu
+    public function destroy($id)
+    {
+        $record = $this->db->find('banner', ['id' => $id['id']], null, true);
+
+        if ($record) {
+            $this->photos->deletePhotos($record);
+            $this->db->delete('banner', ['id' => $id['id']]);
+            header('Location: /admin/banner/' . $record ['parent_id']);
+            exit;
         }
+    }
 
             //przesywanie, sortowanie rekordów w panelu
     public function moveItem($param)

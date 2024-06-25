@@ -7,7 +7,7 @@
 {% block content %}
 <div class="form">
 	{% if formAction == 'update' %}
-		<h6>Edit record - <span>{{ sectionName }}</span></h6>
+		<h6>Edit record - <span>{{ sectionName | default(editName) }}</span></h6>
 		<form action="/admin/body/update/{{ edit.id }}" method="post" enctype="multipart/form-data">
         <input type="hidden" id="parent_id" name="parent_id" value="{{ edit.parent_id }}">
 	{% else %}

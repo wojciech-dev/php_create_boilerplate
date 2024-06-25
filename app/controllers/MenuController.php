@@ -24,9 +24,17 @@ class MenuController
 
     private function generateMenu()
     {
-        $menuData = $this->db->find('menu');
-        $menuGenerator = new MenuGenerator($menuData);
-        return $menuGenerator->generateMenu();
+        try {
+            $menuData = $this->db->find('menu');
+            if (!is_array($menuData)) {
+                throw new Exception('Menu data is not an array');
+            }
+            $menuGenerator = new MenuGenerator($menuData);
+            return $menuGenerator->generateMenu();
+        } catch (Exception $e) {
+            error_log('Exception caught in generateMenu: ' . $e->getMessage());
+            return '';
+        }
     }
 
     public function login()
@@ -43,9 +51,19 @@ class MenuController
     public function home()
     {
         $menuItems = $this->db->find('menu');
-        foreach ($menuItems as $item) {
-            $countsBody[$item['id']] = $this->db->countRecordsLinkedToMenu($item['id'], 'body');
-            $countsBanner[$item['id']] = $this->db->countRecordsLinkedToMenu($item['id'], 'banner');
+    
+        if (is_array($menuItems) || is_object($menuItems)) {
+            $countsBody = [];
+            $countsBanner = [];
+    
+            foreach ($menuItems as $item) {
+                $countsBody[$item['id']] = $this->db->countRecordsLinkedToMenu($item['id'], 'body');
+                $countsBanner[$item['id']] = $this->db->countRecordsLinkedToMenu($item['id'], 'banner');
+            }
+        } else {
+            $menuItems = [];
+            $countsBody = [];
+            $countsBanner = [];
         }
     
         echo TwigConfig::getTwig()->render('admin/menu/menu.twig', [

@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-<h6>Banners - <span>{{ sectionName }}</span></h6>
-    <table class="table_banner">
+<h6>Banners - <span>{{ sectionName | default('No Section') }}</span></h6>
+    <table class="table_banner" data-table-type="banner">
         <thead>
             <tr>
                 <th>ID</th>
@@ -50,7 +50,7 @@
                         <td>
                             <div class="buttons">
                                 <a href="/admin/banner/update/{{ item.id }}" class="edit-button">Edit</a>
-                                <button class="delete-banner-button" data-id="{{ item.id }}">Delete</button>
+                                <button class="delete-button delete-banner-button" data-id="{{ item.id }}" data-type="banner">Delete</button>
                                 <a href="#" class="up" data-id="{{ item.id }}">&#9650;</a>
                                 <a href="#" class="down" data-id="{{ item.id }}">&#9660;</a>
                             </div>

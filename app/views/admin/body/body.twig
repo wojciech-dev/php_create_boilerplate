@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-<h6>Body - <span>{{ sectionName }}</span></h6>
-<table class="table_body">
+<h6>Body - <span>{{ sectionName | default('No Section') }}</span></h6>
+<table class="table_body" data-table-type="body">
     <thead>
         <tr>
             <th>Id</th>
@@ -47,7 +47,7 @@
                     <td>
 					<div class="buttons">
                         <a href="/admin/body/update/{{ item.id }}" class="edit-button">Edit</a>
-                        <button class="delete-body-button" data-id="{{ item.id }}">Delete</button>
+                        <button class="delete-button delete-body-button" data-id="{{ item.id }}" data-type="body">Delete</button>
                         <a href="#" class="up" data-id="{{ item.id }}">&#9650;</a>
                         <a href="#" class="down" data-id="{{ item.id }}">&#9660;</a>
 					</div>

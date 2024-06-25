@@ -7,6 +7,7 @@ require_once('../App/Controllers/MenuController.php');
 require_once('../App/Controllers/FrontController.php');
 require_once('../App/Controllers/BodyController.php');
 require_once('../App/Controllers/BannerController.php');
+require_once('../App/Controllers/MigrationController.php');
 
 use App\Helpers\Functions;
 
@@ -39,11 +40,9 @@ $router->with('/admin', function ($router, $prefix) {
     $router->respondWithController(['POST', $prefix.'/login', 'MenuController@login']);
     $router->respondWithController(['GET', $prefix.'/logout', 'MenuController@logout']);
 
-    //PRZESUWANIE WIERSZY
-   
-
 });
 
+$router->respondWithController(['GET', '/migration', 'MigrationController@migrateTables']);
 
 // Dodanie tras do kontrolera artykułów
 $router->respondWithControllerMultiple('GET', '/', 'FrontController@home', 0);

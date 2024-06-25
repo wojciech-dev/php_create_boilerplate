@@ -32,8 +32,8 @@ class BodyController
     }
 
     //nagłówek tak aby uzytkownik wiedział gdzie dodaje rekordy
-    public function getSectionTitle($id) {
-        $secionTitle = $this->db->find('menu', ['id' => $id], ['title'], true);
+    public function getSectionTitle($table, $id) {
+        $secionTitle = $this->db->find($table, ['id' => $id], ['title'], true);
         if ($secionTitle) {
             return $secionTitle['title'];
         }
@@ -49,7 +49,7 @@ class BodyController
             'items' => $items,
             'section' => $id['id'],
             'menu' => $this->menu,
-            'sectionName' => $this->getSectionTitle($id['id'])
+            'sectionName' => $this->getSectionTitle('menu', $id['id'])
         ]);
     }
     
@@ -77,7 +77,7 @@ class BodyController
             'error' => $errorMessages,
             'edit' => $editData, //zapamietaj dane w polach po validaciji
             'menu' => $this->menu,
-            'sectionName' => $this->getSectionTitle($id['id'])
+            'sectionName' => $this->getSectionTitle('menu', $id['id'])
         ]);
     }
     
@@ -104,7 +104,8 @@ class BodyController
             'edit' => $currentData,
             'formAction' => 'update',
             'error' => $errorMessages,
-            'menu' => $this->menu
+            'menu' => $this->menu,
+            'editName' => $this->getSectionTitle('body', $currentData['id'])
         ]);
     }
     

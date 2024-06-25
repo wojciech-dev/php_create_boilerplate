@@ -14,6 +14,7 @@
 		<nav>
 			<ul>
 				<li><a href="/admin/menu">MENU</a></li>
+				<li><a href="/migration">Create database</a></li>
 			</ul>
 		</nav>
 		<div class="user-info">
@@ -29,7 +30,18 @@
 		</div>
 		<div class="right_column">
 			<main>
-				{% block content %}{% endblock %}
+			{% if successAlert is defined and successAlert %}
+				<div class="alert alert-success">
+					{{ successAlert }}
+				</div>
+			{% endif %}
+
+			{% if dangerAlert is defined and dangerAlert %}
+				<div class="alert alert-danger">
+					{{ dangerAlert }}
+				</div>
+			{% endif %}
+			{% block content %}{% endblock %}
 			</main>
 		</div>
 	</div>
@@ -41,3 +53,5 @@
 </body>
 </head>
 </html>
+
+
